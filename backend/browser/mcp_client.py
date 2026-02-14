@@ -14,7 +14,7 @@ from langchain_core.tools import BaseTool
 _client: MultiServerMCPClient | None = None
 _tools: list[BaseTool] | None = None
 
-PLAYWRIGHT_MCP_URL = "http://localhost:3001/mcp"
+PLAYWRIGHT_MCP_URL = "http://localhost:3001/sse"
 
 ALLOWED_TOOLS = {
     "browser_navigate",
@@ -31,7 +31,7 @@ def _create_client() -> MultiServerMCPClient:
     return MultiServerMCPClient({
         "playwright": {
             "url": PLAYWRIGHT_MCP_URL,
-            "transport": "streamable_http",
+            "transport": "sse",
         }
     })
 
