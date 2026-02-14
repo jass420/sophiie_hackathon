@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
-import { ChatMessage as ChatMessageType, ProductListing } from '../../types';
+import type { ChatMessage as ChatMessageType, ProductListing } from '../../types';
 
 interface Props {
   messages: ChatMessageType[];

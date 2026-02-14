@@ -1,35 +1,40 @@
-from langchain_core.tools import tool
-from backend.search.types import ProductListing
 import json
+from langchain_core.tools import tool
+from backend.search.scraper import search_marketplace as _search_marketplace
 
 
 @tool
-def search_marketplace(
+async def search_marketplace(
     query: str,
     marketplace: str = "all",
     max_price: float | None = None,
-    category: str = "furniture",
 ) -> str:
-    """Search for furniture on online marketplaces.
+    """Search for furniture on online marketplaces like eBay, Facebook Marketplace, and Gumtree.
 
     Args:
-        query: Search query for furniture (e.g. "mid-century coffee table")
+        query: Search query for furniture (e.g. "mid-century coffee table", "blue sofa")
         marketplace: Which marketplace to search: "facebook", "ebay", "gumtree", or "all"
-        max_price: Maximum price in dollars
-        category: Product category, usually "furniture"
+        max_price: Maximum price in dollars (optional)
 
     Returns:
-        JSON string of product listings found
+        JSON string of product listings found on the marketplaces
     """
-    # This will be replaced with actual Playwright MCP calls
-    # For now, return a placeholder
-    return json.dumps({
-        "status": "search_initiated",
-        "query": query,
-        "marketplace": marketplace,
-        "max_price": max_price,
-        "message": "Searching marketplaces... (Playwright MCP integration pending)",
-    })
+    try:
+        products = await _search_marketplace(query, marketplace, max_price)
+
+        return json.dumps({
+            "status": "success",
+            "query": query,
+            "count": len(products),
+            "products": [p.model_dump() for p in products],
+        })
+    except Exception as e:
+        return json.dumps({
+            "status": "error",
+            "query": query,
+            "error": str(e),
+            "products": [],
+        })
 
 
 @tool

@@ -1,5 +1,6 @@
 import json
 import base64
+from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -7,7 +8,8 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, AIMessage
 
-load_dotenv()
+# Load .env from project root
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 app = FastAPI(title="Roomie API")
 
@@ -55,17 +57,15 @@ async def chat(request: ChatRequest):
     for msg in request.messages:
         if msg.role == "user":
             if msg.image:
-                # Multi-modal message with image
+                # Multi-modal message with image (OpenAI format)
                 content = [
+                    {"type": "text", "text": msg.content or "Please analyze this room."},
                     {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "image/jpeg",
-                            "data": msg.image,
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{msg.image}",
                         },
                     },
-                    {"type": "text", "text": msg.content or "Please analyze this room."},
                 ]
                 lc_messages.append(HumanMessage(content=content))
             else:
@@ -83,8 +83,9 @@ async def chat(request: ChatRequest):
             last_message = result["messages"][-1]
             content = last_message.content
 
-            # Check for tool calls in intermediate messages
+            # Extract tool calls and their results
             tool_results = []
+            products = []
             for msg in result["messages"]:
                 if hasattr(msg, "tool_calls") and msg.tool_calls:
                     for tc in msg.tool_calls:
@@ -92,11 +93,20 @@ async def chat(request: ChatRequest):
                             "tool": tc["name"],
                             "args": tc["args"],
                         })
+                # ToolMessage contains the results
+                if msg.type == "tool" and msg.content:
+                    try:
+                        tool_data = json.loads(msg.content)
+                        if "products" in tool_data:
+                            products.extend(tool_data["products"])
+                    except (json.JSONDecodeError, TypeError):
+                        pass
 
             response_data = {
                 "role": "assistant",
                 "content": content,
                 "tool_calls": tool_results,
+                "products": products,
             }
 
             yield f"data: {json.dumps(response_data)}\n\n"

@@ -1,6 +1,7 @@
+import os
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from backend.agent.state import AgentState
 from backend.agent.prompts import SYSTEM_PROMPT
@@ -8,9 +9,10 @@ from backend.agent.tools import ALL_TOOLS
 
 
 def create_agent():
-    model = ChatAnthropic(
-        model="claude-sonnet-4-20250514",
+    model = ChatOpenAI(
+        model="gpt-4o",
         max_tokens=4096,
+        api_key=os.getenv("OPENAI_APIKEY"),
     ).bind_tools(ALL_TOOLS)
 
     tool_node = ToolNode(ALL_TOOLS)

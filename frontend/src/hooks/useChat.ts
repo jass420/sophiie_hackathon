@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ChatMessage, ProductListing } from '../types';
+import type { ChatMessage, ProductListing } from '../types';
 
 const API_URL = '/api/chat';
 
@@ -45,6 +45,7 @@ export function useChat() {
       const decoder = new TextDecoder();
       let fullContent = '';
       let toolCalls: ChatMessage['toolCalls'] = [];
+      let products: ProductListing[] = [];
 
       const assistantMessage: ChatMessage = {
         id: crypto.randomUUID(),
@@ -69,23 +70,16 @@ export function useChat() {
               fullContent = data.content || fullContent;
               toolCalls = data.tool_calls || toolCalls;
 
+              // Get products directly from API response
+              if (data.products && data.products.length > 0) {
+                products = data.products;
+              }
+
               // Parse color palette from content
               const colorMatch = fullContent.match(/\[COLOR_PALETTE:\s*(#[0-9a-fA-F]{6}(?:\s*,\s*#[0-9a-fA-F]{6})*)\]/);
               const colorPalette = colorMatch
                 ? colorMatch[1].split(',').map((c: string) => c.trim())
                 : undefined;
-
-              // Parse products from tool calls
-              const products = toolCalls
-                ?.filter(tc => tc.tool === 'search_marketplace')
-                .flatMap(tc => {
-                  try {
-                    const result = typeof tc.result === 'string' ? JSON.parse(tc.result as string) : tc.result;
-                    return result?.products || [];
-                  } catch {
-                    return [];
-                  }
-                });
 
               setMessages(prev =>
                 prev.map(msg =>
@@ -95,7 +89,7 @@ export function useChat() {
                         content: fullContent,
                         toolCalls,
                         colorPalette: colorPalette || undefined,
-                        products: products?.length ? products : undefined,
+                        products: products.length > 0 ? products : undefined,
                       }
                     : msg
                 )

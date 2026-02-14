@@ -1,4 +1,4 @@
-import { ChatMessage as ChatMessageType } from '../../types';
+import type { ChatMessage as ChatMessageType } from '../../types';
 import { ColorPalette } from '../room/ColorPalette';
 import { ProductGrid } from '../products/ProductGrid';
 
