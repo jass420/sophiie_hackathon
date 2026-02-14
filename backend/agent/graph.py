@@ -10,10 +10,10 @@ from langgraph.prebuilt import ToolNode
 from langgraph.types import interrupt
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage
-from backend.agent.state import AgentState, WorkerResult
+from backend.agent.state import AgentState, WorkerResult, MessagingTask, MessagingResult
 from backend.agent.prompts import ORCHESTRATOR_PROMPT
 from backend.agent.tools import ORCHESTRATOR_TOOLS
-from backend.agent.worker import build_worker_a, build_worker_b, parse_worker_results
+from backend.agent.worker import build_worker_a, build_worker_b, build_messaging_worker, parse_worker_results, parse_messaging_results
 from backend.browser.mcp_client import get_playwright_tools_a, get_playwright_tools_b
 
 load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
@@ -41,6 +41,7 @@ async def create_agent():
 
     worker_a_subgraph = build_worker_a(browser_tools_a, worker_model_a)
     worker_b_subgraph = build_worker_b(browser_tools_b, worker_model_b)
+    messaging_worker_subgraph = build_messaging_worker(browser_tools_a, worker_model_a)
     orchestrator_tool_node = ToolNode(ORCHESTRATOR_TOOLS, handle_tool_errors=True)
 
     # ---- System prompt with optional FB credentials ----
@@ -143,7 +144,7 @@ Workers will handle Facebook login if needed using these credentials.
                     },
                     config={"recursion_limit": 100},
                 ),
-                timeout=180,  # 3 minute timeout per worker
+                timeout=300,  # 5 minute timeout per worker
             )
         except asyncio.TimeoutError:
             # Worker took too long — return empty results
@@ -257,6 +258,97 @@ Workers will handle Facebook login if needed using these credentials.
             "approved_items": approved_ids,
         }
 
+    # ---- Messaging Nodes ----
+
+    def process_messaging(state: AgentState):
+        """Extract messaging task from the contact_seller tool result."""
+        for msg in reversed(state["messages"]):
+            if isinstance(msg, ToolMessage):
+                try:
+                    result = json.loads(msg.content)
+                    if result.get("status") == "dispatch_messaging":
+                        task = MessagingTask(
+                            product_url=result["product_url"],
+                            message=result["message"],
+                            seller_name=result.get("seller_name", "Seller"),
+                        )
+                        return {"_messaging_tasks": [task], "_messaging_results": []}
+                except (json.JSONDecodeError, TypeError):
+                    pass
+                break
+        return {"_messaging_tasks": [], "_messaging_results": []}
+
+    async def run_messaging_worker(state: AgentState):
+        """Run the messaging worker to send a message via Playwright."""
+        tasks = state.get("_messaging_tasks", [])
+        if not tasks:
+            return {"_messaging_results": [MessagingResult(
+                product_url="", seller_name="", success=False,
+                reasoning="No messaging task found",
+            )]}
+
+        task = tasks[0]
+
+        # Include FB credentials if available
+        creds_info = ""
+        if fb_email and fb_password:
+            creds_info = (
+                f"\n\nFacebook Login Credentials (use ONLY if you see a login page):\n"
+                f"- Email: {fb_email}\n"
+                f"- Password: {fb_password}\n"
+            )
+
+        try:
+            worker_state = await asyncio.wait_for(
+                messaging_worker_subgraph.ainvoke(
+                    {
+                        "messages": [HumanMessage(content=(
+                            f"Send a message to the seller for this listing:\n"
+                            f"- URL: {task['product_url']}\n"
+                            f"- Seller: {task['seller_name']}\n"
+                            f"- Message: {task['message']}\n"
+                            f"{creds_info}"
+                        ))],
+                        "messaging_task": task,
+                        "step_count": 0,
+                    },
+                    config={"recursion_limit": 50},
+                ),
+                timeout=120,  # 2 minute timeout for messaging
+            )
+        except asyncio.TimeoutError:
+            return {"_messaging_results": [MessagingResult(
+                product_url=task["product_url"],
+                seller_name=task["seller_name"],
+                success=False,
+                reasoning="Messaging worker timed out",
+            )]}
+
+        result = parse_messaging_results(worker_state["messages"])
+        return {"_messaging_results": [MessagingResult(
+            product_url=task["product_url"],
+            seller_name=task["seller_name"],
+            success=result.get("success", False),
+            reasoning=result.get("reasoning", "Unknown"),
+        )]}
+
+    def merge_messaging_results(state: AgentState):
+        """Format messaging results for the orchestrator."""
+        results = state.get("_messaging_results", [])
+        if not results:
+            summary = "No messaging results."
+        else:
+            lines = ["## Messaging Results\n"]
+            for r in results:
+                status = "Sent" if r["success"] else "Failed"
+                lines.append(f"- **{r['seller_name']}**: {status} — {r['reasoning']}")
+            summary = "\n".join(lines)
+
+        return {
+            "messages": [HumanMessage(content=summary)],
+            "_messaging_tasks": [],
+        }
+
     # ---- Routing ----
 
     def route_orchestrator(state: AgentState):
@@ -274,6 +366,8 @@ Workers will handle Facebook login if needed using these credentials.
                         return "human_approval"
                     if result.get("status") == "dispatched":
                         return "process_dispatch"
+                    if result.get("status") == "dispatch_messaging":
+                        return "process_messaging"
                 except (json.JSONDecodeError, TypeError):
                     pass
                 break
@@ -287,6 +381,7 @@ Workers will handle Facebook login if needed using these credentials.
     #     └→ orchestrator_tools → route_after_tools
     #          ├→ human_approval → orchestrator
     #          ├→ process_dispatch → run_workers (A+B parallel) → merge_results → orchestrator
+    #          ├→ process_messaging → run_messaging_worker → merge_messaging_results → orchestrator
     #          └→ orchestrator (loop)
 
     graph = StateGraph(AgentState)
@@ -297,6 +392,9 @@ Workers will handle Facebook login if needed using these credentials.
     graph.add_node("run_workers", run_workers)
     graph.add_node("merge_results", merge_results)
     graph.add_node("human_approval", human_approval)
+    graph.add_node("process_messaging", process_messaging)
+    graph.add_node("run_messaging_worker", run_messaging_worker)
+    graph.add_node("merge_messaging_results", merge_messaging_results)
 
     graph.add_edge(START, "orchestrator")
     graph.add_conditional_edges(
@@ -307,11 +405,19 @@ Workers will handle Facebook login if needed using these credentials.
     graph.add_conditional_edges(
         "orchestrator_tools",
         route_after_orchestrator_tools,
-        {"human_approval": "human_approval", "process_dispatch": "process_dispatch", "orchestrator": "orchestrator"},
+        {
+            "human_approval": "human_approval",
+            "process_dispatch": "process_dispatch",
+            "process_messaging": "process_messaging",
+            "orchestrator": "orchestrator",
+        },
     )
     graph.add_edge("process_dispatch", "run_workers")
     graph.add_edge("run_workers", "merge_results")
     graph.add_edge("merge_results", "orchestrator")
     graph.add_edge("human_approval", "orchestrator")
+    graph.add_edge("process_messaging", "run_messaging_worker")
+    graph.add_edge("run_messaging_worker", "merge_messaging_results")
+    graph.add_edge("merge_messaging_results", "orchestrator")
 
     return graph.compile()

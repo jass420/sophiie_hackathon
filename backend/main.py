@@ -88,6 +88,8 @@ async def chat(request: ChatRequest):
                     "worker_results": [],
                     "_tasks_a": [],
                     "_tasks_b": [],
+                    "_messaging_tasks": [],
+                    "_messaging_results": [],
                 },
                 config={"recursion_limit": 100},
             )

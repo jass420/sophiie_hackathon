@@ -1,6 +1,3 @@
-
-cat >> .gitignore << 'EOF'
-
 # secrets
 .env
 .env.*
@@ -17,7 +14,12 @@ venv/
 # playwright mcp logs/artifacts
 .playwright-mcp/
 
+# node
+node_modules/
+
 # misc
 __pycache__/
 *.log
-EOF
+
+# playwright browser snapshot artifacts
+fb-*

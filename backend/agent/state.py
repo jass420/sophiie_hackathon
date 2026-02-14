@@ -49,6 +49,19 @@ class WorkerResult(TypedDict):
     reasoning: str
 
 
+class MessagingTask(TypedDict):
+    product_url: str
+    message: str
+    seller_name: str
+
+
+class MessagingResult(TypedDict):
+    product_url: str
+    seller_name: str
+    success: bool
+    reasoning: str
+
+
 class AgentState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
     room_analysis: dict | None
@@ -61,3 +74,5 @@ class AgentState(TypedDict):
     worker_results: list[WorkerResult]
     _tasks_a: list[SearchTask]  # tasks assigned to Worker A
     _tasks_b: list[SearchTask]  # tasks assigned to Worker B
+    _messaging_tasks: list[MessagingTask]
+    _messaging_results: list[MessagingResult]

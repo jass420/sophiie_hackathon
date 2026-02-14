@@ -9,11 +9,11 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import BaseMessage, SystemMessage, AIMessage, HumanMessage, ToolMessage
 
-from backend.agent.state import SearchTask
-from backend.agent.prompts import WORKER_PROMPT
+from backend.agent.state import SearchTask, MessagingTask
+from backend.agent.prompts import WORKER_PROMPT, MESSAGING_WORKER_PROMPT
 
 
-MAX_WORKER_STEPS = 20  # max tool-call rounds before forcing wrap-up
+MAX_WORKER_STEPS = 30  # max tool-call rounds before forcing wrap-up
 
 
 class WorkerState(TypedDict):
@@ -164,3 +164,99 @@ def parse_worker_results(messages: list[BaseMessage]) -> list[dict]:
             except (json.JSONDecodeError, AttributeError):
                 pass
     return []
+
+
+# ---- Messaging Worker ----
+
+MAX_MESSAGING_STEPS = 15
+
+
+class MessagingWorkerState(TypedDict):
+    messages: Annotated[list[BaseMessage], add_messages]
+    messaging_task: MessagingTask
+    step_count: int
+
+
+def build_messaging_worker(browser_tools, worker_model):
+    """Build a messaging worker subgraph that sends messages to sellers via Playwright."""
+
+    tool_node = ToolNode(browser_tools, handle_tool_errors=True)
+
+    def messaging_agent(state: MessagingWorkerState):
+        step = state.get("step_count", 0)
+        task = state["messaging_task"]
+
+        task_block = f"""
+## Your Messaging Task
+- **Listing URL**: {task['product_url']}
+- **Seller**: {task['seller_name']}
+- **Message to send**: {task['message']}
+
+Navigate to the listing URL, find the message button, type the message, and send it.
+"""
+        urgency = ""
+        if step >= MAX_MESSAGING_STEPS - 3:
+            urgency = (
+                "\n\n⚠️ YOU ARE RUNNING OUT OF STEPS. "
+                "Output your [MESSAGING_RESULTS] JSON block NOW. "
+                "Report success if you sent the message, or failure if you couldn't."
+            )
+
+        messages = state["messages"]
+        if not messages or not isinstance(messages[0], SystemMessage):
+            messages = [SystemMessage(content=MESSAGING_WORKER_PROMPT + task_block)] + messages
+
+        if urgency:
+            messages = messages + [HumanMessage(content=urgency)]
+
+        response = worker_model.invoke(messages)
+        return {"messages": [response], "step_count": step + 1}
+
+    def should_continue(state: MessagingWorkerState):
+        if state.get("step_count", 0) >= MAX_MESSAGING_STEPS:
+            return END
+        last = state["messages"][-1]
+        if hasattr(last, "tool_calls") and last.tool_calls:
+            return "messaging_tools"
+        return END
+
+    graph = StateGraph(MessagingWorkerState)
+    graph.add_node("messaging_agent", messaging_agent)
+    graph.add_node("messaging_tools", tool_node)
+    graph.add_edge(START, "messaging_agent")
+    graph.add_conditional_edges(
+        "messaging_agent",
+        should_continue,
+        {"messaging_tools": "messaging_tools", END: END},
+    )
+    graph.add_edge("messaging_tools", "messaging_agent")
+
+    return graph.compile()
+
+
+def parse_messaging_results(messages: list[BaseMessage]) -> dict:
+    """Extract messaging result from the worker's final message."""
+    for msg in reversed(messages):
+        if isinstance(msg, AIMessage) and msg.content:
+            content = msg.content
+            match = re.search(
+                r"\[MESSAGING_RESULTS\]\s*(.*?)\s*\[/MESSAGING_RESULTS\]",
+                content,
+                re.DOTALL,
+            )
+            if match:
+                try:
+                    return json.loads(match.group(1))
+                except json.JSONDecodeError:
+                    pass
+            # Fallback: look for JSON with "success" key
+            try:
+                json_match = re.search(r'\{[^{}]*"success"\s*:', content, re.DOTALL)
+                if json_match:
+                    # Try to parse from this position
+                    brace_start = json_match.start()
+                    data = json.loads(content[brace_start:content.index("}", brace_start) + 1])
+                    return data
+            except (json.JSONDecodeError, AttributeError, ValueError):
+                pass
+    return {"success": False, "reasoning": "No messaging results found in worker output"}

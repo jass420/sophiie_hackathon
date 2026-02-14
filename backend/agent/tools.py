@@ -92,10 +92,10 @@ def contact_seller(
         Status of the message
     """
     return json.dumps({
-        "status": "message_sent",
-        "to": seller_name,
+        "status": "dispatch_messaging",
+        "product_url": product_url,
         "message": message,
-        "note": "Message sent to seller.",
+        "seller_name": seller_name,
     })
 
 

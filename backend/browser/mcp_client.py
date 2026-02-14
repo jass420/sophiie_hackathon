@@ -33,6 +33,8 @@ ALLOWED_TOOLS = {
     "browser_tab_select",
     "browser_tab_list",
     "browser_tab_close",
+    "browser_scroll_down",
+    "browser_scroll_up",
 }
 
 # Keep a separate ref to the screenshot tool for the API endpoint
