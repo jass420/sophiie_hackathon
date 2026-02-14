@@ -1,0 +1,331 @@
+- generic [ref=e5]:
+  - banner:
+    - generic [ref=e6]:
+      - generic:
+        - button [disabled]
+      - link "Facebook" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img [ref=e8]
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic:
+          - generic:
+            - generic:
+              - button:
+                - img
+      - generic [ref=e19]:
+        - generic:
+          - img
+        - combobox "Search Facebook" [ref=e20] [cursor=pointer]
+    - navigation "Facebook" [ref=e24]:
+      - list [ref=e25]:
+        - listitem [ref=e26]:
+          - link "Home" [ref=e29] [cursor=pointer]:
+            - /url: /
+            - img [ref=e31]
+        - listitem [ref=e33]:
+          - link "Friends" [ref=e36] [cursor=pointer]:
+            - /url: /friends/
+            - img [ref=e38]
+        - listitem [ref=e40]:
+          - link "Reels" [ref=e43] [cursor=pointer]:
+            - /url: /reel/?s=tab
+            - img [ref=e45]
+        - listitem [ref=e48]:
+          - link "Marketplace" [ref=e52] [cursor=pointer]:
+            - /url: /marketplace/?ref=app_tab
+            - img [ref=e54]
+        - listitem [ref=e56]:
+          - link "Groups" [ref=e59] [cursor=pointer]:
+            - /url: /groups/
+            - img [ref=e61]
+    - navigation "Account Controls and Settings" [ref=e64]:
+      - button "Menu" [ref=e68] [cursor=pointer]:
+        - img [ref=e69]
+      - generic [ref=e74]:
+        - button "Messenger, 6 unread" [ref=e75] [cursor=pointer]:
+          - img [ref=e76]
+        - button [ref=e79] [cursor=pointer]:
+          - generic [ref=e82]:
+            - generic [ref=e83]: 6 Unread Chats
+            - generic [ref=e84]: "6"
+      - generic [ref=e88]:
+        - button "Notifications, 37 unread" [ref=e89] [cursor=pointer]:
+          - img [ref=e90]
+        - button [ref=e92] [cursor=pointer]:
+          - generic [ref=e93]:
+            - generic [ref=e94]: Number of unread notifications
+            - generic [ref=e95]: 20+
+      - button "Your profile" [ref=e98] [cursor=pointer]:
+        - generic [ref=e99]:
+          - img "Your profile" [ref=e100]
+          - img [ref=e107]
+  - generic [ref=e114]:
+    - navigation "Marketplace sidebar" [ref=e115]:
+      - generic [ref=e116]:
+        - generic [ref=e119]:
+          - heading "Marketplace" [level=1] [ref=e124]
+          - button "Edit Marketplace Settings" [ref=e127] [cursor=pointer]
+        - generic [ref=e138]:
+          - generic:
+            - img
+          - combobox "Search Marketplace" [ref=e139]
+        - generic [ref=e144]:
+          - link "Browse all" [ref=e146] [cursor=pointer]:
+            - /url: /marketplace/
+            - generic [ref=e156]: Browse all
+          - link "Notifications" [ref=e158] [cursor=pointer]:
+            - /url: /marketplace/notifications/
+            - generic [ref=e168]: Notifications
+          - link "Inbox" [ref=e170] [cursor=pointer]:
+            - /url: /marketplace/inbox/
+            - generic [ref=e180]: Inbox
+          - link "Marketplace access" [ref=e182] [cursor=pointer]:
+            - /url: /marketplace/status/
+            - generic [ref=e192]: Marketplace access
+          - link "Buying" [ref=e194] [cursor=pointer]:
+            - /url: /marketplace/you/
+            - generic [ref=e204]: Buying
+          - link "Selling" [ref=e210] [cursor=pointer]:
+            - /url: /marketplace/you/selling/
+            - generic [ref=e220]: Selling
+          - link "Create new listing" [ref=e226] [cursor=pointer]:
+            - /url: /marketplace/create/
+            - generic [ref=e230]: Create new listing
+          - generic [ref=e231]:
+            - generic [ref=e245]: Location
+            - button "Gold Coast, Queensland Within 70 km" [ref=e247] [cursor=pointer]:
+              - generic [ref=e250]:
+                - text: Gold Coast, Queensland
+                - generic [ref=e251]: ·
+                - text: Within 70 km
+          - generic [ref=e266]: Categories
+          - link "Vehicles" [ref=e269] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=546583916084032&query=Vehicles&referral_ui_component=category_menu_item
+            - generic [ref=e279]: Vehicles
+          - link "Property Rentals" [ref=e282] [cursor=pointer]:
+            - /url: /marketplace/category/propertyrentals/
+            - generic [ref=e292]: Property Rentals
+          - link "Apparel" [ref=e295] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=677457442746983&query=Apparel&referral_ui_component=category_menu_item
+            - generic [ref=e305]: Apparel
+          - link "Classifieds" [ref=e308] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=759201041254543&query=Classifieds&referral_ui_component=category_menu_item
+            - generic [ref=e318]: Classifieds
+          - link "Electronics" [ref=e321] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=479353692612078&query=Electronics&referral_ui_component=category_menu_item
+            - generic [ref=e331]: Electronics
+          - link "Entertainment" [ref=e334] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=529595287638583&query=Entertainment&referral_ui_component=category_menu_item
+            - generic [ref=e344]: Entertainment
+          - link "Family" [ref=e347] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=891748581240437&query=Family&referral_ui_component=category_menu_item
+            - generic [ref=e357]: Family
+          - link "Free Stuff" [ref=e360] [cursor=pointer]:
+            - /url: /marketplace/category/free/
+            - generic [ref=e370]: Free Stuff
+          - link "Garden & Outdoor" [ref=e373] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=1109541402725436&query=Garden%20%26%20Outdoor&referral_ui_component=category_menu_item
+            - generic [ref=e383]: Garden & Outdoor
+          - link "Hobbies" [ref=e386] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=459026188375950&query=Hobbies&referral_ui_component=category_menu_item
+            - generic [ref=e396]: Hobbies
+          - link "Home Goods" [ref=e399] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=753380185098614&query=Home%20Goods&referral_ui_component=category_menu_item
+            - generic [ref=e409]: Home Goods
+          - link "Home Improvement Supplies" [ref=e412] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=476291743038859&query=Home%20Improvement%20Supplies&referral_ui_component=category_menu_item
+            - generic [ref=e422]: Home Improvement Supplies
+          - link "Home Sales" [ref=e425] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=1270772586445798&query=Home%20Sales&referral_ui_component=category_menu_item
+            - generic [ref=e435]: Home Sales
+          - link "Musical Instruments" [ref=e438] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=1078592699170502&query=Musical%20Instruments&referral_ui_component=category_menu_item
+            - generic [ref=e448]: Musical Instruments
+          - link "Office Supplies" [ref=e451] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=586894672179024&query=Office%20Supplies&referral_ui_component=category_menu_item
+            - generic [ref=e461]: Office Supplies
+          - link "Pet Supplies" [ref=e464] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=197143151659643&query=Pet%20Supplies&referral_ui_component=category_menu_item
+            - generic [ref=e474]: Pet Supplies
+          - link "Sporting Goods" [ref=e477] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=391335928190702&query=Sporting%20Goods&referral_ui_component=category_menu_item
+            - generic [ref=e487]: Sporting Goods
+          - link "Toys & Games" [ref=e490] [cursor=pointer]:
+            - /url: /marketplace/goldcoast/search/?category_id=199404184572737&query=Toys%20%26%20Games&referral_ui_component=category_menu_item
+            - generic [ref=e500]: Toys & Games
+          - link "Buy and sell groups" [ref=e502] [cursor=pointer]:
+            - /url: /marketplace/groups/
+            - generic [ref=e512]: Buy and sell groups
+    - main "Collection of Marketplace items" [ref=e514]:
+      - generic [ref=e522]:
+        - generic [ref=e530]:
+          - generic [ref=e532]:
+            - heading "Today's picks" [level=2] [ref=e533]:
+              - generic [ref=e534]: Today's picks
+            - button "Gold Coast 70 km" [ref=e536] [cursor=pointer]:
+              - generic [ref=e540]:
+                - text: Gold Coast
+                - generic [ref=e541]: ·
+                - text: 70 km
+          - generic [ref=e543]:
+            - link "Just listed Bedside tables - PENDING PICK UP in Brisbane, QLD A$50" [ref=e552] [cursor=pointer]:
+              - /url: /marketplace/item/1535708254188157/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e553]:
+                - generic [ref=e554]:
+                  - generic [ref=e559]: Just listed
+                  - img "Bedside tables - PENDING PICK UP in Brisbane, QLD" [ref=e565]
+                - generic [ref=e566]:
+                  - generic [ref=e570]: A$50
+                  - generic [ref=e575]: Bedside tables - PENDING PICK UP
+                  - generic [ref=e580]: Brisbane, QLD
+            - link "Just listed three seater and two seater recliner couch ￼ in Brisbane, QLD A$500" [ref=e589] [cursor=pointer]:
+              - /url: /marketplace/item/1454307419769602/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e590]:
+                - generic [ref=e591]:
+                  - generic [ref=e596]: Just listed
+                  - img "three seater and two seater recliner couch ￼ in Brisbane, QLD" [ref=e602]
+                - generic [ref=e603]:
+                  - generic [ref=e607]: A$500
+                  - generic [ref=e612]: three seater and two seater recliner couch ￼
+                  - generic [ref=e617]: Brisbane, QLD
+            - link "2018 Kia cerato in Brisbane, QLD A$14,000 63K km" [ref=e626] [cursor=pointer]:
+              - /url: /marketplace/item/898457772885786/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e627]:
+                - img "2018 Kia cerato in Brisbane, QLD" [ref=e634]
+                - generic [ref=e635]:
+                  - generic [ref=e639]: A$14,000
+                  - generic [ref=e644]: 2018 Kia cerato
+                  - generic [ref=e649]: Brisbane, QLD
+                  - generic [ref=e653]: 63K km
+            - link "Vintage Magazine Rack / Book Stand in Gold Coast, QLD A$120" [ref=e662] [cursor=pointer]:
+              - /url: /marketplace/item/861094523347029/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e663]:
+                - img "Vintage Magazine Rack / Book Stand in Gold Coast, QLD" [ref=e670]
+                - generic [ref=e671]:
+                  - generic [ref=e675]: A$120
+                  - generic [ref=e680]: Vintage Magazine Rack / Book Stand
+                  - generic [ref=e685]: Gold Coast, QLD
+            - link "2 x bedside tables near new in Brisbane, QLD A$380" [ref=e694] [cursor=pointer]:
+              - /url: /marketplace/item/1385342896195251/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e695]:
+                - img "2 x bedside tables near new in Brisbane, QLD" [ref=e702]
+                - generic [ref=e703]:
+                  - generic [ref=e707]: A$380
+                  - generic [ref=e712]: 2 x bedside tables near new
+                  - generic [ref=e717]: Brisbane, QLD
+            - link "Solid Oak dining table. in Gold Coast, QLD A$700" [ref=e726] [cursor=pointer]:
+              - /url: /marketplace/item/2528881630840892/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e727]:
+                - img "Solid Oak dining table. in Gold Coast, QLD" [ref=e734]
+                - generic [ref=e735]:
+                  - generic [ref=e739]: A$700
+                  - generic [ref=e744]: Solid Oak dining table.
+                  - generic [ref=e749]: Gold Coast, QLD
+            - link "King Bed Frame in Brisbane, QLD A$300" [ref=e758] [cursor=pointer]:
+              - /url: /marketplace/item/1567340361266633/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e759]:
+                - img "King Bed Frame in Brisbane, QLD" [ref=e766]
+                - generic [ref=e767]:
+                  - generic [ref=e771]: A$300
+                  - generic [ref=e776]: King Bed Frame
+                  - generic [ref=e781]: Brisbane, QLD
+            - link "Sim Racing Setup in Gold Coast, QLD A$800" [ref=e790] [cursor=pointer]:
+              - /url: /marketplace/item/1476315977544368/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e791]:
+                - img "Sim Racing Setup in Gold Coast, QLD" [ref=e798]
+                - generic [ref=e799]:
+                  - generic [ref=e803]: A$800
+                  - generic [ref=e808]: Sim Racing Setup
+                  - generic [ref=e813]: Gold Coast, QLD
+            - link "Temple and Webster Bedframe in Brisbane, QLD A$125" [ref=e822] [cursor=pointer]:
+              - /url: /marketplace/item/815945171503525/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e823]:
+                - img "Temple and Webster Bedframe in Brisbane, QLD" [ref=e830]
+                - generic [ref=e831]:
+                  - generic [ref=e835]: A$125
+                  - generic [ref=e840]: Temple and Webster Bedframe
+                  - generic [ref=e845]: Brisbane, QLD
+            - link "Extendable 6-8 seater dining table in Brisbane, QLD A$500" [ref=e854] [cursor=pointer]:
+              - /url: /marketplace/item/867382072956767/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e855]:
+                - img "Extendable 6-8 seater dining table in Brisbane, QLD" [ref=e862]
+                - generic [ref=e863]:
+                  - generic [ref=e867]: A$500
+                  - generic [ref=e872]: Extendable 6-8 seater dining table
+                  - generic [ref=e877]: Brisbane, QLD
+            - link "Just listed Queen Bed Frame +/- mattress in Gold Coast, QLD A$100" [ref=e886] [cursor=pointer]:
+              - /url: /marketplace/item/933451096293422/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e887]:
+                - generic [ref=e888]:
+                  - generic [ref=e893]: Just listed
+                  - img "Queen Bed Frame +/- mattress in Gold Coast, QLD" [ref=e899]
+                - generic [ref=e900]:
+                  - generic [ref=e904]: A$100
+                  - generic [ref=e909]: Queen Bed Frame +/- mattress
+                  - generic [ref=e914]: Gold Coast, QLD
+            - link "IKEA BED FRAME in Gold Coast, QLD A$50" [ref=e923] [cursor=pointer]:
+              - /url: /marketplace/item/1529471818343422/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e924]:
+                - img "IKEA BED FRAME in Gold Coast, QLD" [ref=e931]
+                - generic [ref=e932]:
+                  - generic [ref=e936]: A$50
+                  - generic [ref=e941]: IKEA BED FRAME
+                  - generic [ref=e946]: Gold Coast, QLD
+            - link "Queen bed frame in Gold Coast, QLD A$180" [ref=e955] [cursor=pointer]:
+              - /url: /marketplace/item/1425053515762288/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e956]:
+                - img "Queen bed frame in Gold Coast, QLD" [ref=e963]
+                - generic [ref=e964]:
+                  - generic [ref=e968]: A$180
+                  - generic [ref=e973]: Queen bed frame
+                  - generic [ref=e978]: Gold Coast, QLD
+            - link "Queen size timber bed frame in Brisbane, QLD A$300" [ref=e987] [cursor=pointer]:
+              - /url: /marketplace/item/1211751893940963/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e988]:
+                - img "Queen size timber bed frame in Brisbane, QLD" [ref=e995]
+                - generic [ref=e996]:
+                  - generic [ref=e1000]: A$300
+                  - generic [ref=e1005]: Queen size timber bed frame
+                  - generic [ref=e1010]: Brisbane, QLD
+            - link "Hamptons Style Queen Bed Frame in Gold Coast, QLD A$280" [ref=e1019] [cursor=pointer]:
+              - /url: /marketplace/item/1239006544796325/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e1020]:
+                - img "Hamptons Style Queen Bed Frame in Gold Coast, QLD" [ref=e1027]
+                - generic [ref=e1028]:
+                  - generic [ref=e1032]: A$280
+                  - generic [ref=e1037]: Hamptons Style Queen Bed Frame
+                  - generic [ref=e1042]: Gold Coast, QLD
+            - link "Queen mattress in Gold Coast, QLD A$300" [ref=e1051] [cursor=pointer]:
+              - /url: /marketplace/item/1262283389127413/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e1052]:
+                - img "Queen mattress in Gold Coast, QLD" [ref=e1059]
+                - generic [ref=e1060]:
+                  - generic [ref=e1064]: A$300
+                  - generic [ref=e1069]: Queen mattress
+                  - generic [ref=e1074]: Gold Coast, QLD
+            - link "Queen Storage Bed Frame – Lift-Up Storage in Gold Coast, QLD A$200" [ref=e1083] [cursor=pointer]:
+              - /url: /marketplace/item/1225533046118099/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e1084]:
+                - img "Queen Storage Bed Frame – Lift-Up Storage in Gold Coast, QLD" [ref=e1091]
+                - generic [ref=e1092]:
+                  - generic [ref=e1096]: A$200
+                  - generic [ref=e1101]: Queen Storage Bed Frame – Lift-Up Storage
+                  - generic [ref=e1106]: Gold Coast, QLD
+            - link "BRAND NEW - Apollo Bedroom Furniture from $240 in Brisbane, QLD A$240" [ref=e1115] [cursor=pointer]:
+              - /url: /marketplace/item/1438097714462267/?ref=browse_tab&referral_code=marketplace_top_picks&referral_story_type=top_picks&__tn__=!%3AD
+              - generic [ref=e1116]:
+                - img "BRAND NEW - Apollo Bedroom Furniture from $240 in Brisbane, QLD" [ref=e1123]
+                - generic [ref=e1124]:
+                  - generic [ref=e1128]: A$240
+                  - generic [ref=e1133]: BRAND NEW - Apollo Bedroom Furniture from $240
+                  - generic [ref=e1138]: Brisbane, QLD
+        - status "Loading..." [ref=e1140]:
+          - generic [ref=e1147]:
+            - img "Loading more items" [ref=e1150]
+            - img "Loading more items" [ref=e1159]
+            - img "Loading more items" [ref=e1167]
+            - img "Loading more items" [ref=e1176]
+            - img "Loading more items" [ref=e1184]
+            - img "Loading more items" [ref=e1193]
+  - button "New message" [ref=e1201] [cursor=pointer]

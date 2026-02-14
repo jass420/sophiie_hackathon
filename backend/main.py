@@ -89,7 +89,7 @@ async def chat(request: ChatRequest):
                     "_tasks_a": [],
                     "_tasks_b": [],
                 },
-                config={"recursion_limit": 50},
+                config={"recursion_limit": 100},
             )
 
             # Get the last AI message

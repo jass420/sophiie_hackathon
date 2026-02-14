@@ -14,26 +14,33 @@ from backend.agent.state import AgentState, WorkerResult
 from backend.agent.prompts import ORCHESTRATOR_PROMPT
 from backend.agent.tools import ORCHESTRATOR_TOOLS
 from backend.agent.worker import build_worker_a, build_worker_b, parse_worker_results
-from backend.browser.mcp_client import get_playwright_tools
+from backend.browser.mcp_client import get_playwright_tools_a, get_playwright_tools_b
 
 load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
 
 
 async def create_agent():
-    browser_tools = await get_playwright_tools()
+    # Each worker gets its own Playwright MCP server for true parallel browsing
+    browser_tools_a = await get_playwright_tools_a()  # port 3001
+    browser_tools_b = await get_playwright_tools_b()  # port 3002
 
     orchestrator_model = ChatOpenAI(
         model="gpt-5",
         api_key=os.getenv("OPENAI_APIKEY"),
     ).bind_tools(ORCHESTRATOR_TOOLS)
 
-    worker_model = ChatOpenAI(
+    worker_model_a = ChatOpenAI(
         model="gpt-5",
         api_key=os.getenv("OPENAI_APIKEY"),
-    ).bind_tools(browser_tools)
+    ).bind_tools(browser_tools_a)
 
-    worker_a_subgraph = build_worker_a(browser_tools, worker_model)
-    worker_b_subgraph = build_worker_b(browser_tools, worker_model)
+    worker_model_b = ChatOpenAI(
+        model="gpt-5",
+        api_key=os.getenv("OPENAI_APIKEY"),
+    ).bind_tools(browser_tools_b)
+
+    worker_a_subgraph = build_worker_a(browser_tools_a, worker_model_a)
+    worker_b_subgraph = build_worker_b(browser_tools_b, worker_model_b)
     orchestrator_tool_node = ToolNode(ORCHESTRATOR_TOOLS, handle_tool_errors=True)
 
     # ---- System prompt with optional FB credentials ----
@@ -73,11 +80,19 @@ Workers will handle Facebook login if needed using these credentials.
                     pass
                 break
 
-        # Split tasks: odd-indexed → A, even-indexed → B
-        # (or first half / second half if you prefer)
-        mid = (len(tasks) + 1) // 2
-        tasks_a = tasks[:mid]
-        tasks_b = tasks[mid:]
+        # Split by item type: group tasks by item_type, then assign
+        # each item type group to a different worker.
+        # e.g. Worker A searches for "bed" on all marketplaces,
+        #      Worker B searches for "sidetable" on all marketplaces.
+        from collections import OrderedDict
+        groups = OrderedDict()
+        for t in tasks:
+            groups.setdefault(t["item_type"], []).append(t)
+
+        item_types = list(groups.keys())
+        mid = (len(item_types) + 1) // 2
+        tasks_a = [t for it in item_types[:mid] for t in groups[it]]
+        tasks_b = [t for it in item_types[mid:] for t in groups[it]]
 
         return {
             "search_tasks": tasks,  # keep full list for reference
@@ -93,14 +108,54 @@ Workers will handle Facebook login if needed using these credentials.
         if not tasks:
             return []
 
-        items_desc = ", ".join(t["item_type"] for t in tasks)
-        worker_state = await subgraph.ainvoke(
-            {
-                "messages": [HumanMessage(content=f"Search for these items: {items_desc}")],
-                "tasks": tasks,
-            },
-            config={"recursion_limit": 30},
-        )
+        # Build a detailed, unique message for this specific worker
+        task_details = []
+        for i, t in enumerate(tasks, 1):
+            task_details.append(
+                f"{i}. {t['item_type']} on {t['marketplace']} "
+                f"(style: {', '.join(t.get('style_keywords', []))}, "
+                f"budget: ${t.get('max_budget', 'N/A')} AUD, "
+                f"constraints: {t.get('constraints', 'none')})"
+            )
+        task_list_str = "\n".join(task_details)
+
+        # Include FB credentials if available so workers can log in if needed
+        creds_info = ""
+        if fb_email and fb_password:
+            creds_info = (
+                f"\n\nFacebook Login Credentials (use ONLY if you see a login page):\n"
+                f"- Email: {fb_email}\n"
+                f"- Password: {fb_password}\n"
+            )
+
+        try:
+            worker_state = await asyncio.wait_for(
+                subgraph.ainvoke(
+                    {
+                        "messages": [HumanMessage(content=(
+                            f"You are {worker_name}. Search for ONLY these specific items:\n"
+                            f"{task_list_str}\n\n"
+                            f"Navigate DIRECTLY to the search URL for each item. Do NOT go to the marketplace homepage. Go fast."
+                            f"{creds_info}"
+                        ))],
+                        "tasks": tasks,
+                        "step_count": 0,
+                    },
+                    config={"recursion_limit": 100},
+                ),
+                timeout=180,  # 3 minute timeout per worker
+            )
+        except asyncio.TimeoutError:
+            # Worker took too long — return empty results
+            results = []
+            for task in tasks:
+                results.append(WorkerResult(
+                    task_id=task["id"],
+                    item_type=task["item_type"],
+                    picks=[],
+                    reasoning=f"{worker_name} timed out searching for {task['item_type']} on {task['marketplace']}",
+                ))
+            return results
 
         picks = parse_worker_results(worker_state["messages"])
         results = []

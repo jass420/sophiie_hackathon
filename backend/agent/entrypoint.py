@@ -6,7 +6,7 @@ from pathlib import Path
 from langchain_openai import ChatOpenAI
 from backend.agent.graph import create_agent
 from backend.agent.worker import build_worker_a, build_worker_b
-from backend.browser.mcp_client import get_playwright_tools
+from backend.browser.mcp_client import get_playwright_tools_a, get_playwright_tools_b
 
 load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
 
@@ -16,22 +16,21 @@ async def make_graph():
     return await create_agent()
 
 
-async def _get_worker_deps():
-    browser_tools = await get_playwright_tools()
+async def make_worker_a():
+    """Async factory — Worker A graph for Studio visibility (port 3001)."""
+    browser_tools = await get_playwright_tools_a()
     worker_model = ChatOpenAI(
         model="gpt-5",
         api_key=os.getenv("OPENAI_APIKEY"),
     ).bind_tools(browser_tools)
-    return browser_tools, worker_model
-
-
-async def make_worker_a():
-    """Async factory — Worker A graph for Studio visibility."""
-    browser_tools, worker_model = await _get_worker_deps()
     return build_worker_a(browser_tools, worker_model)
 
 
 async def make_worker_b():
-    """Async factory — Worker B graph for Studio visibility."""
-    browser_tools, worker_model = await _get_worker_deps()
+    """Async factory — Worker B graph for Studio visibility (port 3002)."""
+    browser_tools = await get_playwright_tools_b()
+    worker_model = ChatOpenAI(
+        model="gpt-5",
+        api_key=os.getenv("OPENAI_APIKEY"),
+    ).bind_tools(browser_tools)
     return build_worker_b(browser_tools, worker_model)

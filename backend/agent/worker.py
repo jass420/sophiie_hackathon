@@ -7,15 +7,19 @@ from typing import Annotated, TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
-from langchain_core.messages import BaseMessage, SystemMessage, AIMessage
+from langchain_core.messages import BaseMessage, SystemMessage, AIMessage, HumanMessage, ToolMessage
 
 from backend.agent.state import SearchTask
 from backend.agent.prompts import WORKER_PROMPT
 
 
+MAX_WORKER_STEPS = 20  # max tool-call rounds before forcing wrap-up
+
+
 class WorkerState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
     tasks: list[SearchTask]  # multiple tasks for this worker
+    step_count: int  # tracks how many tool rounds have executed
 
 
 def _build_worker(worker_name: str, browser_tools, worker_model):
@@ -23,8 +27,43 @@ def _build_worker(worker_name: str, browser_tools, worker_model):
 
     worker_tool_node = ToolNode(browser_tools, handle_tool_errors=True)
 
+    def _trim_messages(messages, keep_last_n=4):
+        """Keep system prompt, first human message, and only the last N tool interactions.
+        This prevents browser snapshots from accumulating and blowing up token usage.
+        """
+        if len(messages) <= keep_last_n + 2:
+            return messages
+
+        # Always keep: system prompt (index 0) + first human message (index 1)
+        prefix = []
+        rest_start = 0
+        for i, msg in enumerate(messages):
+            if isinstance(msg, (SystemMessage, HumanMessage)):
+                prefix.append(msg)
+                rest_start = i + 1
+            else:
+                break
+
+        # From the remaining messages, keep only the last N
+        # But make sure we don't split an AI message from its ToolMessage response
+        tail = messages[rest_start:]
+        if len(tail) <= keep_last_n:
+            return prefix + tail
+
+        trimmed_tail = tail[-keep_last_n:]
+        # If the first message in the tail is a ToolMessage, we need the AI message before it
+        if trimmed_tail and isinstance(trimmed_tail[0], ToolMessage):
+            # Find the matching AI message
+            idx = len(tail) - keep_last_n - 1
+            if idx >= 0:
+                trimmed_tail = [tail[idx]] + trimmed_tail
+
+        return prefix + trimmed_tail
+
     def worker_agent(state: WorkerState):
         tasks = state["tasks"]
+        step = state.get("step_count", 0)
+
         # Build task descriptions for all assigned items
         task_lines = []
         for i, task in enumerate(tasks, 1):
@@ -42,17 +81,34 @@ def _build_worker(worker_name: str, browser_tools, worker_model):
 
 {"".join(task_lines)}
 
-IMPORTANT: First, open a NEW browser tab with `browser_tab_new` so you have your own workspace.
-Then search each marketplace for each item. Find the top 3 listings per item.
+Go FAST. Navigate directly to search URLs. Scan results. Return picks. Aim for 2-3 picks per item.
 """
+        # If approaching step limit, inject an urgency message
+        urgency = ""
+        if step >= MAX_WORKER_STEPS - 5:
+            urgency = (
+                "\n\n⚠️ YOU ARE RUNNING OUT OF STEPS. "
+                "You MUST output your [WORKER_RESULTS] JSON block NOW with whatever picks you have found so far. "
+                "Do NOT make any more browser calls. Summarize and return results IMMEDIATELY."
+            )
+
         messages = state["messages"]
         if not messages or not isinstance(messages[0], SystemMessage):
             messages = [SystemMessage(content=WORKER_PROMPT + task_block)] + messages
 
+        if urgency:
+            messages = messages + [HumanMessage(content=urgency)]
+
+        # Trim old messages to avoid sending huge browser snapshots every turn
+        messages = _trim_messages(messages, keep_last_n=6)
+
         response = worker_model.invoke(messages)
-        return {"messages": [response]}
+        return {"messages": [response], "step_count": step + 1}
 
     def should_continue(state: WorkerState):
+        # Force stop if we've hit the step limit
+        if state.get("step_count", 0) >= MAX_WORKER_STEPS:
+            return END
         last = state["messages"][-1]
         if hasattr(last, "tool_calls") and last.tool_calls:
             return "worker_tools"
