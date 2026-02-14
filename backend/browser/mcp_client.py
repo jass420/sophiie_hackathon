@@ -25,6 +25,10 @@ ALLOWED_TOOLS = {
     "browser_fill_form",
     "browser_wait_for",
     "browser_take_screenshot",
+    "browser_tab_new",
+    "browser_tab_select",
+    "browser_tab_list",
+    "browser_tab_close",
 }
 
 # Keep a separate ref to the screenshot tool for the API endpoint

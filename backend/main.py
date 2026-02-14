@@ -76,8 +76,20 @@ async def chat(request: ChatRequest):
     async def event_stream():
         try:
             result = await agent.ainvoke(
-                {"messages": lc_messages, "room_analysis": None, "shopping_list": [], "search_results": [], "pending_proposal": None, "approved_items": []},
-                config={"recursion_limit": 30},
+                {
+                    "messages": lc_messages,
+                    "room_analysis": None,
+                    "shopping_list": [],
+                    "search_results": [],
+                    "pending_proposal": None,
+                    "approved_items": [],
+                    "search_tasks": [],
+                    "current_task_index": 0,
+                    "worker_results": [],
+                    "_tasks_a": [],
+                    "_tasks_b": [],
+                },
+                config={"recursion_limit": 50},
             )
 
             # Get the last AI message

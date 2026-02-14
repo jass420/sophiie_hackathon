@@ -99,4 +99,40 @@ def contact_seller(
     })
 
 
-ALL_TOOLS = [propose_shortlist, add_to_shopping_list, contact_seller]
+@tool
+def dispatch_searches(tasks_json: str) -> str:
+    """Create search tasks for item worker agents. Each task searches ONE marketplace for ONE item type.
+    Call this when you have analyzed the room and know what furniture to search for.
+
+    Args:
+        tasks_json: JSON string of an array of search tasks. Each task must have:
+            - id: unique task identifier (e.g., "task_1")
+            - item_type: what to search for (e.g., "sofa", "coffee table", "rug")
+            - style_keywords: list of style terms (e.g., ["mid-century", "walnut", "minimalist"])
+            - max_budget: maximum price in AUD
+            - marketplace: which site to search ("ebay", "facebook", "gumtree")
+            - constraints: any size/location/condition constraints (e.g., "must fit 2m wall, pickup Brisbane")
+
+    Returns:
+        Confirmation that workers have been dispatched
+    """
+    try:
+        tasks = json.loads(tasks_json)
+        return json.dumps({
+            "status": "dispatched",
+            "task_count": len(tasks),
+            "tasks": tasks,
+            "message": f"Dispatched {len(tasks)} search tasks to item workers. Results will be merged when all complete.",
+        })
+    except json.JSONDecodeError:
+        return json.dumps({
+            "status": "error",
+            "message": "Invalid JSON in tasks_json. Please provide a valid JSON array.",
+        })
+
+
+# Tools for the orchestrator (no browser tools)
+ORCHESTRATOR_TOOLS = [propose_shortlist, add_to_shopping_list, contact_seller, dispatch_searches]
+
+# Legacy alias
+ALL_TOOLS = ORCHESTRATOR_TOOLS

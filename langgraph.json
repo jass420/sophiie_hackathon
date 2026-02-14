@@ -1,7 +1,9 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "agent": "./backend/agent/entrypoint.py:make_graph"
+    "orchestrator": "./backend/agent/entrypoint.py:make_graph",
+    "worker_a": "./backend/agent/entrypoint.py:make_worker_a",
+    "worker_b": "./backend/agent/entrypoint.py:make_worker_b"
   },
   "env": ".env"
 }
