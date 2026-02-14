@@ -1,39 +1,43 @@
 import json
 from langchain_core.tools import tool
-from backend.search.scraper import search_marketplace as _search_marketplace
 
 
 @tool
-async def search_marketplace(
-    query: str,
-    marketplace: str = "all",
-    max_price: float | None = None,
-) -> str:
-    """Search for furniture on online marketplaces like eBay, Facebook Marketplace, and Gumtree.
+def propose_shortlist(items_json: str) -> str:
+    """Propose a shortlist of items for the user to approve or reject.
+    Call this BEFORE adding items to the shopping list or contacting sellers.
+    The user will see the proposal and can approve, reject, or select specific items.
 
     Args:
-        query: Search query for furniture (e.g. "mid-century coffee table", "blue sofa")
-        marketplace: Which marketplace to search: "facebook", "ebay", "gumtree", or "all"
-        max_price: Maximum price in dollars (optional)
+        items_json: JSON string of an array of items. Each item must have:
+            - id: unique identifier
+            - title: item name
+            - price: item price (number)
+            - source: marketplace name
+            - url: link to listing
+            - image_url: product image URL (optional)
+            - seller: seller name (optional)
+            - draft_message: draft message to seller (optional, include if proposing to contact)
 
     Returns:
-        JSON string of product listings found on the marketplaces
+        Confirmation that the proposal was submitted for user review
     """
     try:
-        products = await _search_marketplace(query, marketplace, max_price)
+        items = json.loads(items_json)
+        has_messages = any(item.get("draft_message") for item in items)
+        proposal_type = "contact_sellers" if has_messages else "shortlist"
 
         return json.dumps({
-            "status": "success",
-            "query": query,
-            "count": len(products),
-            "products": [p.model_dump() for p in products],
+            "status": "pending_approval",
+            "type": proposal_type,
+            "item_count": len(items),
+            "items": items,
+            "message": f"Proposed {len(items)} items for user approval. Waiting for user to approve/reject.",
         })
-    except Exception as e:
+    except json.JSONDecodeError:
         return json.dumps({
             "status": "error",
-            "query": query,
-            "error": str(e),
-            "products": [],
+            "message": "Invalid JSON in items_json. Please provide a valid JSON array.",
         })
 
 
@@ -47,6 +51,7 @@ def add_to_shopping_list(
     image_url: str = "",
 ) -> str:
     """Add a furniture item to the user's shopping list.
+    Only call this AFTER the user has approved the item via propose_shortlist.
 
     Args:
         product_id: Unique identifier for the product
@@ -75,7 +80,8 @@ def contact_seller(
     message: str,
     seller_name: str = "Seller",
 ) -> str:
-    """Draft and send a message to a marketplace seller.
+    """Send a message to a marketplace seller.
+    Only call this AFTER the user has approved via propose_shortlist with draft_message.
 
     Args:
         product_url: URL of the product listing
@@ -86,11 +92,11 @@ def contact_seller(
         Status of the message
     """
     return json.dumps({
-        "status": "message_drafted",
+        "status": "message_sent",
         "to": seller_name,
         "message": message,
-        "note": "Message ready to send. Awaiting user approval.",
+        "note": "Message sent to seller.",
     })
 
 
-ALL_TOOLS = [search_marketplace, add_to_shopping_list, contact_seller]
+ALL_TOOLS = [propose_shortlist, add_to_shopping_list, contact_seller]

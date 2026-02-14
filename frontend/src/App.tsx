@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChatPanel } from './components/chat/ChatPanel';
 import { ShoppingList } from './components/products/ShoppingList';
+import { BrowserView } from './components/browser/BrowserView';
 import { useChat } from './hooks/useChat';
 
 function App() {
@@ -58,6 +59,11 @@ function App() {
             <ShoppingList items={shoppingList} onRemove={removeFromShoppingList} />
           </div>
         )}
+
+        {/* Live browser view */}
+        <div className="w-[480px] shrink-0 relative">
+          <BrowserView />
+        </div>
       </div>
     </div>
   );

@@ -1,1 +1,23 @@
-credentials.txt
+
+cat >> .gitignore << 'EOF'
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# python envs
+myenv/
+venv/
+.venv/
+
+# langgraph local artifacts
+.langgraph_api/
+
+# playwright mcp logs/artifacts
+.playwright-mcp/
+
+# misc
+__pycache__/
+*.log
+EOF

@@ -1,0 +1,11 @@
+[project]
+name = "roomie"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[tool.setuptools.packages.find]
+include = ["backend*"]

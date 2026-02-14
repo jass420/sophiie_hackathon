@@ -3,7 +3,7 @@ import base64
 from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, AIMessage
@@ -76,7 +76,7 @@ async def chat(request: ChatRequest):
     async def event_stream():
         try:
             result = await agent.ainvoke(
-                {"messages": lc_messages, "room_analysis": None, "shopping_list": [], "search_results": []},
+                {"messages": lc_messages, "room_analysis": None, "shopping_list": [], "search_results": [], "pending_proposal": None, "approved_items": []},
                 config={"recursion_limit": 30},
             )
 
@@ -118,6 +118,17 @@ async def chat(request: ChatRequest):
             yield "data: [DONE]\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
+@app.get("/api/browser/screenshot")
+async def browser_screenshot():
+    """Return the current browser screenshot as base64."""
+    await get_agent()  # ensure MCP tools are loaded
+    from backend.browser.mcp_client import take_screenshot
+    result = await take_screenshot()
+    if result is None:
+        return JSONResponse({"screenshot": None, "status": "no_browser"})
+    return JSONResponse({"screenshot": result, "status": "ok"})
 
 
 if __name__ == "__main__":

@@ -1,0 +1,20 @@
+[    1074ms] [WARNING] Error with Permissions-Policy header: Unrecognized feature: 'bluetooth'. @ :0
+[    9530ms] [ERROR] ErrorUtils caught an error:
+
+terminate stream because StartStreamFailure with msg : UNAUTHENTICATED [Caught in: Subscription error in preprocessResponse]
+
+Subsequent non-fatal errors won't be logged; see https://fburl.com/debugjs. {column: 180, clientTime: 1771026178, extra: Object, guardList: Array(0), hash: sshyce} @ https://static.xx.fbcdn.net/rsrc.php/v4/y1/r/nNYs_w7IK4e.js:76
+[   15721ms] [WARNING] The resource https://static.xx.fbcdn.net/rsrc.php/v4/yp/r/OopP7foA1Bc.png was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://www.facebook.com/marketplace:0
+[   44185ms] [WARNING] The resource https://static.xx.fbcdn.net/rsrc.php/v4/yp/r/OopP7foA1Bc.png was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://www.facebook.com/marketplace:0
+[   46760ms] [WARNING] Error with Permissions-Policy header: Unrecognized feature: 'bluetooth'. @ :0
+[   48471ms] [WARNING] Error with Permissions-Policy header: Unrecognized feature: 'bluetooth'. @ :0
+[   48645ms] [ERROR] Permissions policy violation: unload is not allowed in this document. @ https://static.xx.fbcdn.net/rsrc.php/v4/y8/r/Z7FleB5e0YK.js:326
+[ 1210710ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.facebook.com/nw/:0
+[ 1210821ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.facebook.com/nw/:0
+[ 1211027ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.facebook.com/nw/:0
+[ 1211833ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.facebook.com/nw/:0
+[ 1515886ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.facebook.com/nw/:0
+[ 1516147ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.facebook.com/nw/:0
+[ 2038726ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.facebook.com/nw/:0
+[ 2038830ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.facebook.com/nw/:0
+[ 2039039ms] [ERROR] Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ https://www.facebook.com/nw/:0
