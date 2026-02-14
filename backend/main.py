@@ -25,11 +25,11 @@ app.add_middleware(
 _agent = None
 
 
-def get_agent():
+async def get_agent():
     global _agent
     if _agent is None:
-        from backend.agent.graph import agent
-        _agent = agent
+        from backend.agent.graph import create_agent
+        _agent = await create_agent()
     return _agent
 
 
@@ -50,7 +50,7 @@ async def health():
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
-    agent = get_agent()
+    agent = await get_agent()
 
     # Convert messages to LangChain format
     lc_messages = []
@@ -77,6 +77,7 @@ async def chat(request: ChatRequest):
         try:
             result = await agent.ainvoke(
                 {"messages": lc_messages, "room_analysis": None, "shopping_list": [], "search_results": []},
+                config={"recursion_limit": 30},
             )
 
             # Get the last AI message
