@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+anthropic>=0.49.0
+langgraph
+langchain-anthropic
+langchain-core
+python-multipart
+pydantic
+mcp
