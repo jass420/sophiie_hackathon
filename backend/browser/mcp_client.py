@@ -1,9 +1,11 @@
 """
-Playwright MCP Client - connects to Microsoft's Playwright MCP server
+Playwright MCP Client - connects to a long-lived Playwright MCP HTTP server
 and provides browser automation tools to the LangGraph agent.
+
+Start the server first:
+  DISPLAY=:1 npx @playwright/mcp@latest --port 3001 --no-sandbox
 """
 
-import asyncio
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_core.tools import BaseTool
 
@@ -12,32 +14,30 @@ from langchain_core.tools import BaseTool
 _client: MultiServerMCPClient | None = None
 _tools: list[BaseTool] | None = None
 
-# Start simple - just navigate
+PLAYWRIGHT_MCP_URL = "http://localhost:3001/mcp"
+
 ALLOWED_TOOLS = {
     "browser_navigate",
     "browser_snapshot",
+    "browser_click",
+    "browser_type",
+    "browser_press_key",
+    "browser_fill_form",
+    "browser_wait_for",
 }
 
 
 def _create_client() -> MultiServerMCPClient:
     return MultiServerMCPClient({
         "playwright": {
-            "command": "npx",
-            "args": [
-                "@playwright/mcp@latest",
-                "--headless",
-                "--no-sandbox",
-            ],
-            "transport": "stdio",
+            "url": PLAYWRIGHT_MCP_URL,
+            "transport": "streamable_http",
         }
     })
 
 
 async def get_playwright_tools() -> list[BaseTool]:
-    """Get Playwright browser tools from the MCP server.
-
-    Returns a filtered list of LangChain-compatible tools for browser automation.
-    """
+    """Get Playwright browser tools from the MCP server."""
     global _client, _tools
 
     if _tools is not None:
@@ -46,7 +46,6 @@ async def get_playwright_tools() -> list[BaseTool]:
     _client = _create_client()
     all_tools = await _client.get_tools()
 
-    # Filter to only the tools we need
     _tools = [t for t in all_tools if t.name in ALLOWED_TOOLS]
     return _tools
 
