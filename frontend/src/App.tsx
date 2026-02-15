@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import FOG from 'vanta/dist/vanta.fog.min';
 
 function App() {
-  const { messages, isLoading, sendMessage, resumeWithApproval, shoppingList, addToShoppingList, removeFromShoppingList } = useChat();
+  const { messages, isLoading, sendMessage, resumeWithApproval, shoppingList, addToShoppingList, removeFromShoppingList, voiceEnabled, toggleVoice, isSpeaking, stopSpeaking } = useChat();
   const [showSidebar, setShowSidebar] = useState(false);
   const vantaRef = useRef<HTMLDivElement>(null);
   const vantaEffect = useRef<ReturnType<typeof FOG> | null>(null);
@@ -53,17 +53,56 @@ function App() {
           </div>
         </div>
 
-        <button
-          onClick={() => setShowSidebar(!showSidebar)}
-          className="relative px-3 py-1.5 text-sm font-medium text-gray-700 bg-white/40 backdrop-blur-xl border border-white/30 rounded-lg hover:bg-white/60 transition-colors shadow-lg"
-        >
-          Shopping List
-          {shoppingList.length > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center">
-              {shoppingList.length}
-            </span>
+        <div className="flex items-center gap-2">
+          {isSpeaking && (
+            <button
+              onClick={stopSpeaking}
+              className="p-2 rounded-lg transition-colors shadow-lg border bg-red-500/50 backdrop-blur-xl text-white border-red-400/30 animate-pulse"
+              title="Stop speaking"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                <rect x="6" y="6" width="12" height="12" rx="2" />
+              </svg>
+            </button>
           )}
-        </button>
+          <button
+            onClick={toggleVoice}
+            className={`p-2 rounded-lg transition-colors shadow-lg border ${
+              voiceEnabled
+                ? 'bg-violet-500/50 backdrop-blur-xl text-white border-violet-400/30'
+                : 'bg-white/40 backdrop-blur-xl text-gray-700 border-white/30 hover:bg-white/60'
+            }`}
+            title={voiceEnabled ? 'Disable voice responses' : 'Enable voice responses'}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {voiceEnabled ? (
+                <>
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                </>
+              ) : (
+                <>
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                  <line x1="23" y1="9" x2="17" y2="15" />
+                  <line x1="17" y1="9" x2="23" y2="15" />
+                </>
+              )}
+            </svg>
+          </button>
+
+          <button
+            onClick={() => setShowSidebar(!showSidebar)}
+            className="relative px-3 py-1.5 text-sm font-medium text-gray-700 bg-white/40 backdrop-blur-xl border border-white/30 rounded-lg hover:bg-white/60 transition-colors shadow-lg"
+          >
+            Shopping List
+            {shoppingList.length > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center">
+                {shoppingList.length}
+              </span>
+            )}
+          </button>
+        </div>
       </header>
 
       {/* Main content */}

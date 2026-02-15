@@ -100,7 +100,7 @@ def contact_seller(
 
 @tool
 def dispatch_searches(tasks_json: str) -> str:
-    """Create search tasks for item worker agents. Each task searches ONE marketplace for ONE item type.
+    """Create search tasks for item worker agents. Each task searches Facebook Marketplace for ONE item type.
     Call this when you have analyzed the room and know what furniture to search for.
 
     Args:
@@ -109,7 +109,7 @@ def dispatch_searches(tasks_json: str) -> str:
             - item_type: what to search for (e.g., "sofa", "coffee table", "rug")
             - style_keywords: list of style terms (e.g., ["mid-century", "walnut", "minimalist"])
             - max_budget: maximum price in AUD
-            - marketplace: which site to search ("ebay", "facebook", "gumtree")
+            - marketplace: ALWAYS "facebook" (Facebook Marketplace only)
             - constraints: any size/location/condition constraints (e.g., "must fit 2m wall, pickup Brisbane")
 
     Returns:

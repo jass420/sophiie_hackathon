@@ -44,29 +44,29 @@ export function ApprovalCard({ type, items, onApproveAll, onApproveSelected, onR
   const heading = isContact ? 'Approve messages to sellers?' : 'Approve these picks?';
 
   return (
-    <div className="rounded-xl border border-violet-200 bg-white shadow-sm overflow-hidden max-w-lg">
-      <div className="px-4 py-3 bg-violet-50 border-b border-violet-200">
-        <h3 className="text-sm font-semibold text-violet-900">{heading}</h3>
-        <p className="text-xs text-violet-600 mt-0.5">{items.length} item{items.length !== 1 ? 's' : ''} proposed</p>
+    <div className="rounded-xl border border-white/30 bg-white/40 backdrop-blur-xl shadow-lg overflow-hidden max-w-lg">
+      <div className="px-4 py-3 bg-white/50 border-b border-gray-200/30">
+        <h3 className="text-sm font-semibold text-gray-800">{heading}</h3>
+        <p className="text-xs text-gray-500 mt-0.5">{items.length} item{items.length !== 1 ? 's' : ''} proposed</p>
       </div>
 
-      <div className="divide-y divide-gray-100 max-h-72 overflow-y-auto">
+      <div className="divide-y divide-gray-200/30 max-h-72 overflow-y-auto">
         {items.map(item => (
           <label
             key={item.id}
-            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-white/30 cursor-pointer transition-colors"
           >
             <input
               type="checkbox"
               checked={selected.has(item.id)}
               onChange={() => toggle(item.id)}
-              className="w-4 h-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+              className="w-4 h-4 rounded border-gray-300 text-gray-600 focus:ring-gray-400"
             />
             {item.image_url && (
               <img
                 src={item.image_url}
                 alt={item.title}
-                className="w-12 h-12 rounded-lg object-cover bg-gray-100 shrink-0"
+                className="w-12 h-12 rounded-lg object-cover bg-gray-100/50 shrink-0"
                 onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
             )}
@@ -84,7 +84,7 @@ export function ApprovalCard({ type, items, onApproveAll, onApproveSelected, onR
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-violet-600 hover:underline shrink-0"
+              className="text-xs text-gray-500 hover:text-gray-700 hover:underline shrink-0"
               onClick={e => e.stopPropagation()}
             >
               View
@@ -93,24 +93,24 @@ export function ApprovalCard({ type, items, onApproveAll, onApproveSelected, onR
         ))}
       </div>
 
-      <div className="flex gap-2 px-4 py-3 bg-gray-50 border-t border-gray-100">
+      <div className="flex gap-2 px-4 py-3 bg-white/30 border-t border-gray-200/30">
         <button
           onClick={onApproveAll}
-          className="flex-1 px-3 py-2 text-sm font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700 transition-colors"
+          className="flex-1 px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg hover:bg-gray-800 transition-colors shadow-sm"
         >
           Approve All
         </button>
         {selected.size < items.length && selected.size > 0 && (
           <button
             onClick={() => onApproveSelected(Array.from(selected))}
-            className="flex-1 px-3 py-2 text-sm font-medium text-violet-700 bg-violet-100 rounded-lg hover:bg-violet-200 transition-colors"
+            className="flex-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white/50 border border-gray-300/40 rounded-lg hover:bg-white/70 transition-colors"
           >
             Approve {selected.size} Selected
           </button>
         )}
         <button
           onClick={onReject}
-          className="px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          className="px-3 py-2 text-sm font-medium text-gray-600 bg-white/50 border border-gray-300/40 rounded-lg hover:bg-white/70 transition-colors"
         >
           Reject
         </button>

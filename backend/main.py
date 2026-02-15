@@ -1,5 +1,7 @@
 import asyncio
+import io
 import json
+import os
 import uuid
 import base64
 from pathlib import Path
@@ -8,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from openai import AsyncOpenAI
 from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.types import Command
 
@@ -298,6 +301,38 @@ async def browser_screenshot_b():
     if result is None:
         return JSONResponse({"screenshot": None, "status": "no_browser"})
     return JSONResponse({"screenshot": result, "status": "ok"})
+
+
+class TTSRequest(BaseModel):
+    text: str
+
+
+@app.post("/api/voice/transcribe")
+async def voice_transcribe(file: UploadFile = File(...)):
+    """Transcribe audio to text using OpenAI Whisper."""
+    client = AsyncOpenAI(api_key=os.getenv("OPENAI_APIKEY"))
+    audio_bytes = await file.read()
+    transcript = await client.audio.transcriptions.create(
+        model="whisper-1",
+        file=("audio.webm", audio_bytes, file.content_type or "audio/webm"),
+    )
+    return {"text": transcript.text}
+
+
+@app.post("/api/voice/tts")
+async def voice_tts(req: TTSRequest):
+    """Convert text to speech using OpenAI TTS."""
+    client = AsyncOpenAI(api_key=os.getenv("OPENAI_APIKEY"))
+    response = await client.audio.speech.create(
+        model="tts-1",
+        voice="nova",
+        input=req.text,
+    )
+    return StreamingResponse(
+        io.BytesIO(response.content),
+        media_type="audio/mpeg",
+        headers={"Content-Disposition": "inline; filename=speech.mp3"},
+    )
 
 
 if __name__ == "__main__":

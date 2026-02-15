@@ -8,7 +8,54 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [shoppingList, setShoppingList] = useState<ProductListing[]>([]);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const threadIdRef = useRef<string | null>(null);
+  const voiceEnabledRef = useRef(false);
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  const stopSpeaking = useCallback(() => {
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current = null;
+    }
+    setIsSpeaking(false);
+  }, []);
+
+  const toggleVoice = useCallback(() => {
+    setVoiceEnabled(prev => {
+      const next = !prev;
+      voiceEnabledRef.current = next;
+      if (!next) stopSpeaking();
+      return next;
+    });
+  }, [stopSpeaking]);
+
+  const playTTS = useCallback(async (text: string) => {
+    if (!text.trim()) return;
+    try {
+      const res = await fetch('/api/voice/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      currentAudioRef.current = audio;
+      setIsSpeaking(true);
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        currentAudioRef.current = null;
+        setIsSpeaking(false);
+      };
+      audio.play();
+    } catch (err) {
+      console.error('TTS playback failed:', err);
+      setIsSpeaking(false);
+    }
+  }, []);
 
   const _parseSSE = useCallback(async (
     response: Response,
@@ -71,6 +118,8 @@ export function useChat() {
         }
       }
     }
+
+    return fullContent;
   }, []);
 
   const sendMessage = useCallback(async (content: string, image?: string) => {
@@ -112,7 +161,12 @@ export function useChat() {
       };
       setMessages(prev => [...prev, assistantMessage]);
 
-      await _parseSSE(response, assistantMessage.id);
+      const finalContent = await _parseSSE(response, assistantMessage.id);
+
+      // Auto-play TTS if voice mode is on
+      if (voiceEnabledRef.current && finalContent) {
+        playTTS(finalContent);
+      }
     } catch (error) {
       const errorMessage: ChatMessage = {
         id: crypto.randomUUID(),
@@ -168,7 +222,11 @@ export function useChat() {
       };
       setMessages(prev => [...prev, assistantMessage]);
 
-      await _parseSSE(response, assistantMessage.id);
+      const finalContent = await _parseSSE(response, assistantMessage.id);
+
+      if (voiceEnabledRef.current && finalContent) {
+        playTTS(finalContent);
+      }
     } catch (error) {
       const errorMessage: ChatMessage = {
         id: crypto.randomUUID(),
@@ -202,5 +260,9 @@ export function useChat() {
     shoppingList,
     addToShoppingList,
     removeFromShoppingList,
+    voiceEnabled,
+    toggleVoice,
+    isSpeaking,
+    stopSpeaking,
   };
 }

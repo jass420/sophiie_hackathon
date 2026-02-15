@@ -1,4 +1,5 @@
 import { useState, useRef, type KeyboardEvent } from 'react';
+import { VoiceButton } from './VoiceButton';
 
 interface Props {
   onSend: (content: string, image?: string) => void;
@@ -89,6 +90,12 @@ export function ChatInput({ onSend, isLoading }: Props) {
           accept="image/*"
           onChange={handleImageSelect}
           className="hidden"
+        />
+
+        {/* Voice input button */}
+        <VoiceButton
+          onTranscription={(text) => setInput((prev) => prev ? prev + ' ' + text : text)}
+          disabled={isLoading}
         />
 
         {/* Text input */}
