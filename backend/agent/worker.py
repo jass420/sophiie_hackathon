@@ -13,7 +13,7 @@ from backend.agent.state import SearchTask, MessagingTask
 from backend.agent.prompts import WORKER_PROMPT, MESSAGING_WORKER_PROMPT
 
 
-MAX_WORKER_STEPS = 15  # max tool-call rounds before forcing wrap-up
+MAX_WORKER_STEPS = 10  # max tool-call rounds before forcing wrap-up
 
 
 class WorkerState(TypedDict):
@@ -85,11 +85,17 @@ Go FAST. Navigate directly to search URLs. Scan results. Return picks. Aim for 2
 """
         # If approaching step limit, inject an urgency message
         urgency = ""
-        if step >= MAX_WORKER_STEPS - 3:
+        if step >= MAX_WORKER_STEPS - 2:
             urgency = (
-                "\n\n⚠️ YOU ARE RUNNING OUT OF STEPS. "
+                "\n\n⚠️ FINAL STEP. "
                 "You MUST output your [WORKER_RESULTS] JSON block NOW with whatever picks you have found so far. "
                 "Do NOT make any more browser calls. Summarize and return results IMMEDIATELY."
+            )
+        elif step >= MAX_WORKER_STEPS - 4:
+            urgency = (
+                "\n\n⚠️ RUNNING LOW ON STEPS. "
+                "Wrap up soon. Pick your best 2-3 items from what you've seen and prepare your [WORKER_RESULTS]. "
+                "Do NOT click into individual listings — stay on search results pages."
             )
 
         messages = state["messages"]

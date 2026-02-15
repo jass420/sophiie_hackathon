@@ -152,7 +152,7 @@ Workers will handle Facebook login if needed using these credentials.
                     },
                     config={"recursion_limit": 100},
                 ),
-                timeout=300,  # 5 minute timeout per worker
+                timeout=180,  # 3 minute timeout per worker
             )
         except asyncio.TimeoutError:
             # Worker took too long — return empty results
