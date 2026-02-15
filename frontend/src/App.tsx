@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { ChatPanel } from './components/chat/ChatPanel';
 import { ShoppingList } from './components/products/ShoppingList';
-import { BrowserView } from './components/browser/BrowserView';
 import { useChat } from './hooks/useChat';
 
 function App() {
-  const { messages, isLoading, sendMessage, shoppingList, addToShoppingList, removeFromShoppingList } = useChat();
+  const { messages, isLoading, sendMessage, resumeWithApproval, shoppingList, addToShoppingList, removeFromShoppingList } = useChat();
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
@@ -47,6 +46,9 @@ function App() {
             isLoading={isLoading}
             onSend={sendMessage}
             onAddToList={addToShoppingList}
+            onApproveAll={(msgId) => resumeWithApproval('approve_all', undefined, msgId)}
+            onApproveSelected={(msgId, ids) => resumeWithApproval('approve_selected', ids, msgId)}
+            onReject={(msgId) => resumeWithApproval('reject', undefined, msgId)}
           />
         </div>
 
@@ -60,10 +62,6 @@ function App() {
           </div>
         )}
 
-        {/* Live browser view */}
-        <div className="w-[480px] shrink-0 relative">
-          <BrowserView />
-        </div>
       </div>
     </div>
   );

@@ -1,3 +1,21 @@
+export interface ProposalItem {
+  id: string;
+  title: string;
+  price: number;
+  source: string;
+  url: string;
+  image_url?: string;
+  seller?: string;
+  draft_message?: string;
+}
+
+export interface InterruptData {
+  type: 'shortlist' | 'contact_sellers';
+  items: ProposalItem[];
+  item_count: number;
+  message: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -7,6 +25,8 @@ export interface ChatMessage {
   toolCalls?: ToolCall[];
   products?: ProductListing[];
   colorPalette?: string[];
+  interrupt?: InterruptData;
+  interruptResolved?: boolean;
   timestamp: Date;
 }
 

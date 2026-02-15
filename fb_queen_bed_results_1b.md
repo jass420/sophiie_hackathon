@@ -1,0 +1,373 @@
+- generic [ref=e5]:
+  - banner:
+    - generic [ref=e6]:
+      - generic:
+        - button [disabled]
+      - link "Facebook" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img [ref=e8]
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic:
+          - generic:
+            - generic:
+              - button:
+                - img
+      - generic [ref=e19]:
+        - generic:
+          - img
+        - combobox "Search Facebook" [ref=e20] [cursor=pointer]
+    - navigation "Facebook" [ref=e24]:
+      - list [ref=e25]:
+        - listitem [ref=e26]:
+          - link "Home" [ref=e29] [cursor=pointer]:
+            - /url: /
+            - img [ref=e31]
+        - listitem [ref=e33]:
+          - link "Friends" [ref=e36] [cursor=pointer]:
+            - /url: /friends/
+            - img [ref=e38]
+        - listitem [ref=e40]:
+          - link "Reels" [ref=e43] [cursor=pointer]:
+            - /url: /reel/?s=tab
+            - img [ref=e45]
+        - listitem [ref=e48]:
+          - link "Marketplace" [ref=e52] [cursor=pointer]:
+            - /url: /marketplace/?ref=app_tab
+            - img [ref=e54]
+        - listitem [ref=e56]:
+          - link "Groups" [ref=e59] [cursor=pointer]:
+            - /url: /groups/
+            - img [ref=e61]
+    - navigation "Account Controls and Settings" [ref=e64]:
+      - button "Menu" [ref=e68] [cursor=pointer]:
+        - img [ref=e69]
+      - button "Messenger" [ref=e75] [cursor=pointer]:
+        - img [ref=e76]
+      - generic [ref=e82]:
+        - button "Notifications, 40 unread" [ref=e83] [cursor=pointer]:
+          - img [ref=e84]
+        - button [ref=e86] [cursor=pointer]:
+          - generic [ref=e87]:
+            - generic [ref=e88]: Number of unread notifications
+            - generic [ref=e89]: 20+
+      - button "Your profile" [ref=e92] [cursor=pointer]:
+        - generic [ref=e93]:
+          - img "Your profile" [ref=e94]
+          - img [ref=e101]
+  - generic [ref=e108]:
+    - navigation "Marketplace sidebar" [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e114]:
+          - navigation "Breadcrumb" [ref=e116]:
+            - link "Marketplace" [ref=e121] [cursor=pointer]:
+              - /url: /marketplace/
+          - heading "Search results" [level=1] [ref=e125]
+        - generic [ref=e134]:
+          - generic:
+            - img
+          - combobox "Search Marketplace" [ref=e135]: queen bed frame
+        - generic [ref=e138]:
+          - button "Notify Me" [ref=e143] [cursor=pointer]:
+            - generic [ref=e147]: Notify Me
+          - link "Create new listing" [ref=e149] [cursor=pointer]:
+            - /url: /marketplace/create/
+            - generic [ref=e153]: Create new listing
+          - generic [ref=e154]:
+            - heading "Filters" [level=2] [ref=e167]:
+              - generic [ref=e169]: Filters
+            - generic [ref=e170]:
+              - button "Brisbane, Queensland, Australia Within 70 km" [ref=e171] [cursor=pointer]:
+                - generic [ref=e174]:
+                  - text: Brisbane, Queensland, Australia
+                  - generic [ref=e175]: ·
+                  - text: Within 70 km
+              - generic [ref=e177]:
+                - button "Sort by" [ref=e178] [cursor=pointer]:
+                  - generic [ref=e182]: Sort by
+                - generic [ref=e185]:
+                  - generic [ref=e187]: Price
+                  - generic [ref=e188]:
+                    - textbox "Minimum Range" [ref=e191]:
+                      - /placeholder: Min
+                    - generic [ref=e193]: to
+                    - textbox "Maximum Range" [ref=e196]:
+                      - /placeholder: Max
+                - button "Condition" [ref=e197] [cursor=pointer]:
+                  - generic [ref=e201]: Condition
+                - button "Date listed" [ref=e204] [cursor=pointer]:
+                  - generic [ref=e208]: Date listed
+                - button "Availability" [ref=e211] [cursor=pointer]:
+                  - generic [ref=e215]: Availability
+                - button "Bed Size" [ref=e218] [cursor=pointer]:
+                  - generic [ref=e222]: Bed Size
+                - button "Bed Type" [ref=e225] [cursor=pointer]:
+                  - generic [ref=e229]: Bed Type
+                - button "Color" [ref=e232] [cursor=pointer]:
+                  - generic [ref=e236]: Color
+                - button "Material" [ref=e239] [cursor=pointer]:
+                  - generic [ref=e243]: Material
+          - generic [ref=e259]: Categories
+          - link "Vehicles" [ref=e262] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=546583916084032&query=Vehicles&referral_ui_component=category_menu_item
+            - generic [ref=e272]: Vehicles
+          - link "Property Rentals" [ref=e275] [cursor=pointer]:
+            - /url: /marketplace/brisbane/propertyrentals/
+            - generic [ref=e285]: Property Rentals
+          - link "Apparel" [ref=e288] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=677457442746983&query=Apparel&referral_ui_component=category_menu_item
+            - generic [ref=e298]: Apparel
+          - link "Classifieds" [ref=e301] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=759201041254543&query=Classifieds&referral_ui_component=category_menu_item
+            - generic [ref=e311]: Classifieds
+          - link "Electronics" [ref=e314] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=479353692612078&query=Electronics&referral_ui_component=category_menu_item
+            - generic [ref=e324]: Electronics
+          - link "Entertainment" [ref=e327] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=529595287638583&query=Entertainment&referral_ui_component=category_menu_item
+            - generic [ref=e337]: Entertainment
+          - link "Family" [ref=e340] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=891748581240437&query=Family&referral_ui_component=category_menu_item
+            - generic [ref=e350]: Family
+          - link "Free Stuff" [ref=e353] [cursor=pointer]:
+            - /url: /marketplace/brisbane/free/
+            - generic [ref=e363]: Free Stuff
+          - link "Garden & Outdoor" [ref=e366] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=1109541402725436&query=Garden%20%26%20Outdoor&referral_ui_component=category_menu_item
+            - generic [ref=e376]: Garden & Outdoor
+          - link "Hobbies" [ref=e379] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=459026188375950&query=Hobbies&referral_ui_component=category_menu_item
+            - generic [ref=e389]: Hobbies
+          - link "Home Goods" [ref=e392] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=753380185098614&query=Home%20Goods&referral_ui_component=category_menu_item
+            - generic [ref=e402]: Home Goods
+          - link "Home Improvement Supplies" [ref=e405] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=476291743038859&query=Home%20Improvement%20Supplies&referral_ui_component=category_menu_item
+            - generic [ref=e415]: Home Improvement Supplies
+          - link "Home Sales" [ref=e418] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=1270772586445798&query=Home%20Sales&referral_ui_component=category_menu_item
+            - generic [ref=e428]: Home Sales
+          - link "Musical Instruments" [ref=e431] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=1078592699170502&query=Musical%20Instruments&referral_ui_component=category_menu_item
+            - generic [ref=e441]: Musical Instruments
+          - link "Office Supplies" [ref=e444] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=586894672179024&query=Office%20Supplies&referral_ui_component=category_menu_item
+            - generic [ref=e454]: Office Supplies
+          - link "Pet Supplies" [ref=e457] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=197143151659643&query=Pet%20Supplies&referral_ui_component=category_menu_item
+            - generic [ref=e467]: Pet Supplies
+          - link "Sporting Goods" [ref=e470] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=391335928190702&query=Sporting%20Goods&referral_ui_component=category_menu_item
+            - generic [ref=e480]: Sporting Goods
+          - link "Toys & Games" [ref=e483] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=199404184572737&query=Toys%20%26%20Games&referral_ui_component=category_menu_item
+            - generic [ref=e493]: Toys & Games
+          - link "Buy and sell groups" [ref=e495] [cursor=pointer]:
+            - /url: /marketplace/groups/
+            - generic [ref=e505]: Buy and sell groups
+    - main "Collection of Marketplace items" [ref=e507]:
+      - generic [ref=e512]:
+        - link "Queen Bed Frame - Light Beige in Brisbane, QLD A$200" [ref=e521] [cursor=pointer]:
+          - /url: /marketplace/item/1282379203734554/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e522]:
+            - img "Queen Bed Frame - Light Beige in Brisbane, QLD" [ref=e529]
+            - generic [ref=e530]:
+              - generic [ref=e534]: A$200
+              - generic [ref=e539]: Queen Bed Frame - Light Beige
+              - generic [ref=e544]: Brisbane, QLD
+        - link "IKEA Queen bed mattress & frame in Brisbane, QLD A$100" [ref=e553] [cursor=pointer]:
+          - /url: /marketplace/item/1535060890914244/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e554]:
+            - img "IKEA Queen bed mattress & frame in Brisbane, QLD" [ref=e561]
+            - generic [ref=e562]:
+              - generic [ref=e566]: A$100
+              - generic [ref=e571]: IKEA Queen bed mattress & frame
+              - generic [ref=e576]: Brisbane, QLD
+        - link "Upholstered Queen Bed Frame in Brisbane, QLD A$75" [ref=e585] [cursor=pointer]:
+          - /url: /marketplace/item/882445871300133/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e586]:
+            - img "Upholstered Queen Bed Frame in Brisbane, QLD" [ref=e593]
+            - generic [ref=e594]:
+              - generic [ref=e598]: A$75
+              - generic [ref=e603]: Upholstered Queen Bed Frame
+              - generic [ref=e608]: Brisbane, QLD
+        - link "Queen Bed Frame IKEA @ Nth Bris 4502 DELIVERY AVAILABLE 😊 in Brisbane, QLD A$100" [ref=e617] [cursor=pointer]:
+          - /url: /marketplace/item/1621201339323369/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e618]:
+            - img "Queen Bed Frame IKEA @ Nth Bris 4502 DELIVERY AVAILABLE 😊 in Brisbane, QLD" [ref=e625]
+            - generic [ref=e626]:
+              - generic [ref=e630]: A$100
+              - generic [ref=e635]: Queen Bed Frame IKEA @ Nth Bris 4502 DELIVERY AVAILABLE 😊
+              - generic [ref=e640]: Brisbane, QLD
+        - link "Queen Bed Frame +/- mattress in Gold Coast, QLD A$100" [ref=e649] [cursor=pointer]:
+          - /url: /marketplace/item/933451096293422/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e650]:
+            - img "Queen Bed Frame +/- mattress in Gold Coast, QLD" [ref=e657]
+            - generic [ref=e658]:
+              - generic [ref=e662]: A$100
+              - generic [ref=e667]: Queen Bed Frame +/- mattress
+              - generic [ref=e672]: Gold Coast, QLD
+        - link "Queen bed frame in Brisbane, QLD Free A$50" [ref=e681] [cursor=pointer]:
+          - /url: /marketplace/item/1611017933489278/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e682]:
+            - img "Queen bed frame in Brisbane, QLD" [ref=e689]
+            - generic [ref=e690]:
+              - generic [ref=e693]:
+                - generic [ref=e694]: Free
+                - generic [ref=e696]: A$50
+              - generic [ref=e701]: Queen bed frame
+              - generic [ref=e706]: Brisbane, QLD
+        - link "Brand new queen bed frame in Brisbane, QLD A$300 A$900" [ref=e715] [cursor=pointer]:
+          - /url: /marketplace/item/2641186492916355/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e716]:
+            - img "Brand new queen bed frame in Brisbane, QLD" [ref=e723]
+            - generic [ref=e724]:
+              - generic [ref=e727]:
+                - generic [ref=e728]: A$300
+                - generic [ref=e730]: A$900
+              - generic [ref=e735]: Brand new queen bed frame
+              - generic [ref=e740]: Brisbane, QLD
+        - link "Hardwood queen size bed frame with mattress in Brisbane, QLD A$160" [ref=e749] [cursor=pointer]:
+          - /url: /marketplace/item/1379200630197749/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e750]:
+            - img "Hardwood queen size bed frame with mattress in Brisbane, QLD" [ref=e757]
+            - generic [ref=e758]:
+              - generic [ref=e762]: A$160
+              - generic [ref=e767]: Hardwood queen size bed frame with mattress
+              - generic [ref=e772]: Brisbane, QLD
+        - link "Queen bed frame in Brisbane, QLD A$150" [ref=e781] [cursor=pointer]:
+          - /url: /marketplace/item/1980004769587827/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e782]:
+            - img "Queen bed frame in Brisbane, QLD" [ref=e789]
+            - generic [ref=e790]:
+              - generic [ref=e794]: A$150
+              - generic [ref=e799]: Queen bed frame
+              - generic [ref=e804]: Brisbane, QLD
+        - link "Slated queen bed frame in Brisbane, QLD A$100" [ref=e813] [cursor=pointer]:
+          - /url: /marketplace/item/1266101625375510/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e814]:
+            - img "Slated queen bed frame in Brisbane, QLD" [ref=e821]
+            - generic [ref=e822]:
+              - generic [ref=e826]: A$100
+              - generic [ref=e831]: Slated queen bed frame
+              - generic [ref=e836]: Brisbane, QLD
+        - link "IKEA malm queen bed frame in Brisbane, QLD A$150" [ref=e845] [cursor=pointer]:
+          - /url: /marketplace/item/835072326255141/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e846]:
+            - img "IKEA malm queen bed frame in Brisbane, QLD" [ref=e853]
+            - generic [ref=e854]:
+              - generic [ref=e858]: A$150
+              - generic [ref=e863]: IKEA malm queen bed frame
+              - generic [ref=e868]: Brisbane, QLD
+        - link "Queen bed frame (mattress not included) in Brisbane, QLD A$150" [ref=e877] [cursor=pointer]:
+          - /url: /marketplace/item/934434655642135/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e878]:
+            - img "Queen bed frame (mattress not included) in Brisbane, QLD" [ref=e885]
+            - generic [ref=e886]:
+              - generic [ref=e890]: A$150
+              - generic [ref=e895]: Queen bed frame (mattress not included)
+              - generic [ref=e900]: Brisbane, QLD
+        - link "Queen bed frame in Brisbane, QLD A$150" [ref=e909] [cursor=pointer]:
+          - /url: /marketplace/item/1308004581347518/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e910]:
+            - img "Queen bed frame in Brisbane, QLD" [ref=e917]
+            - generic [ref=e918]:
+              - generic [ref=e922]: A$150
+              - generic [ref=e927]: Queen bed frame
+              - generic [ref=e932]: Brisbane, QLD
+        - link "Queen Bed Frame in Brisbane, QLD A$100 A$150" [ref=e941] [cursor=pointer]:
+          - /url: /marketplace/item/751497604084534/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e942]:
+            - img "Queen Bed Frame in Brisbane, QLD" [ref=e949]
+            - generic [ref=e950]:
+              - generic [ref=e953]:
+                - generic [ref=e954]: A$100
+                - generic [ref=e956]: A$150
+              - generic [ref=e961]: Queen Bed Frame
+              - generic [ref=e966]: Brisbane, QLD
+        - link "Queen size bed frame + mattress + matching side tables. in Sunshine Coast, QLD A$550 A$1,000" [ref=e975] [cursor=pointer]:
+          - /url: /marketplace/item/1441944727327567/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e976]:
+            - img "Queen size bed frame + mattress + matching side tables. in Sunshine Coast, QLD" [ref=e983]
+            - generic [ref=e984]:
+              - generic [ref=e987]:
+                - generic [ref=e988]: A$550
+                - generic [ref=e990]: A$1,000
+              - generic [ref=e995]: Queen size bed frame + mattress + matching side tables.
+              - generic [ref=e1000]: Sunshine Coast, QLD
+        - link "Queen size bed and frame in Brisbane, QLD A$120" [ref=e1009] [cursor=pointer]:
+          - /url: /marketplace/item/1672028287574543/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e1010]:
+            - img "Queen size bed and frame in Brisbane, QLD" [ref=e1017]
+            - generic [ref=e1018]:
+              - generic [ref=e1022]: A$120
+              - generic [ref=e1027]: Queen size bed and frame
+              - generic [ref=e1032]: Brisbane, QLD
+        - link "Gas lift Queen bedframe in Brisbane, QLD A$200" [ref=e1041] [cursor=pointer]:
+          - /url: /marketplace/item/765747126147437/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e1042]:
+            - img "Gas lift Queen bedframe in Brisbane, QLD" [ref=e1049]
+            - generic [ref=e1050]:
+              - generic [ref=e1054]: A$200
+              - generic [ref=e1059]: Gas lift Queen bedframe
+              - generic [ref=e1064]: Brisbane, QLD
+        - link "Bed and mattress queen size in Brisbane, QLD A$50" [ref=e1073] [cursor=pointer]:
+          - /url: /marketplace/item/1414229206331943/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e1074]:
+            - img "Bed and mattress queen size in Brisbane, QLD" [ref=e1081]
+            - generic [ref=e1082]:
+              - generic [ref=e1086]: A$50
+              - generic [ref=e1091]: Bed and mattress queen size
+              - generic [ref=e1096]: Brisbane, QLD
+        - link "Queen bed frame in Brisbane, QLD Free" [ref=e1105] [cursor=pointer]:
+          - /url: /marketplace/item/2647222368968582/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e1106]:
+            - img "Queen bed frame in Brisbane, QLD" [ref=e1113]
+            - generic [ref=e1114]:
+              - generic [ref=e1118]: Free
+              - generic [ref=e1123]: Queen bed frame
+              - generic [ref=e1128]: Brisbane, QLD
+        - link "Queen Bed, Mattress, & Topper in Brisbane, QLD A$150" [ref=e1137] [cursor=pointer]:
+          - /url: /marketplace/item/2415113178940989/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e1138]:
+            - img "Queen Bed, Mattress, & Topper in Brisbane, QLD" [ref=e1145]
+            - generic [ref=e1146]:
+              - generic [ref=e1150]: A$150
+              - generic [ref=e1155]: Queen Bed, Mattress, & Topper
+              - generic [ref=e1160]: Brisbane, QLD
+        - link "Queen bed - sold pending pick up. in Brisbane, QLD A$150" [ref=e1169] [cursor=pointer]:
+          - /url: /marketplace/item/1596049161326893/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e1170]:
+            - img "Queen bed - sold pending pick up. in Brisbane, QLD" [ref=e1177]
+            - generic [ref=e1178]:
+              - generic [ref=e1182]: A$150
+              - generic [ref=e1187]: Queen bed - sold pending pick up.
+              - generic [ref=e1192]: Brisbane, QLD
+        - link "Queen Bed frame in Brisbane, QLD A$80 A$250" [ref=e1201] [cursor=pointer]:
+          - /url: /marketplace/item/4135586993371795/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e1202]:
+            - img "Queen Bed frame in Brisbane, QLD" [ref=e1209]
+            - generic [ref=e1210]:
+              - generic [ref=e1213]:
+                - generic [ref=e1214]: A$80
+                - generic [ref=e1216]: A$250
+              - generic [ref=e1221]: Queen Bed frame
+              - generic [ref=e1226]: Brisbane, QLD
+        - link "Queen bed frame in Brisbane, QLD A$210" [ref=e1235] [cursor=pointer]:
+          - /url: /marketplace/item/885061944158847/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3Abe202e9b-76cc-4385-ace4-b6378ef80f02&__tn__=!%3AD
+          - generic [ref=e1236]:
+            - img "Queen bed frame in Brisbane, QLD" [ref=e1243]
+            - generic [ref=e1244]:
+              - generic [ref=e1248]: A$210
+              - generic [ref=e1253]: Queen bed frame
+              - generic [ref=e1258]: Brisbane, QLD
+        - generic [ref=e1260]:
+          - generic [ref=e1261]:
+            - img "Loading more items" [ref=e1262]
+            - status "Loading..." [ref=e1263]
+          - generic [ref=e1264]:
+            - status "Loading..." [ref=e1265]
+            - status "Loading..." [ref=e1266]
+            - status "Loading..." [ref=e1267]
+            - status "Loading..." [ref=e1268]
+  - button "New message" [ref=e1271] [cursor=pointer]

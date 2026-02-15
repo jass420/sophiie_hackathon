@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
+import { BrowserView } from '../browser/BrowserView';
 import type { ChatMessage as ChatMessageType, ProductListing } from '../../types';
 
 interface Props {
@@ -8,9 +9,12 @@ interface Props {
   isLoading: boolean;
   onSend: (content: string, image?: string) => void;
   onAddToList?: (product: ProductListing) => void;
+  onApproveAll?: (messageId: string) => void;
+  onApproveSelected?: (messageId: string, ids: string[]) => void;
+  onReject?: (messageId: string) => void;
 }
 
-export function ChatPanel({ messages, isLoading, onSend, onAddToList }: Props) {
+export function ChatPanel({ messages, isLoading, onSend, onAddToList, onApproveAll, onApproveSelected, onReject }: Props) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,20 +60,28 @@ export function ChatPanel({ messages, isLoading, onSend, onAddToList }: Props) {
             key={message.id}
             message={message}
             onAddToList={onAddToList}
+            onApproveAll={onApproveAll}
+            onApproveSelected={onApproveSelected}
+            onReject={onReject}
           />
         ))}
 
         {isLoading && (
-          <div className="flex justify-start mb-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white text-sm font-medium shrink-0">
-                R
-              </div>
-              <div className="px-4 py-3 rounded-2xl bg-white shadow-sm border border-gray-100 rounded-bl-md">
-                <div className="flex gap-1.5">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          <div className="mb-4">
+            <div className="flex justify-start">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white text-sm font-medium shrink-0">
+                  R
+                </div>
+                <div className="flex flex-col gap-3">
+                  <div className="px-4 py-3 rounded-2xl bg-white shadow-sm border border-gray-100 rounded-bl-md">
+                    <div className="flex gap-1.5">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+                  <BrowserView />
                 </div>
               </div>
             </div>

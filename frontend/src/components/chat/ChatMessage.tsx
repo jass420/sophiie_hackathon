@@ -1,13 +1,17 @@
 import type { ChatMessage as ChatMessageType } from '../../types';
 import { ColorPalette } from '../room/ColorPalette';
 import { ProductGrid } from '../products/ProductGrid';
+import { ApprovalCard } from '../approval/ApprovalCard';
 
 interface Props {
   message: ChatMessageType;
   onAddToList?: (product: any) => void;
+  onApproveAll?: (messageId: string) => void;
+  onApproveSelected?: (messageId: string, ids: string[]) => void;
+  onReject?: (messageId: string) => void;
 }
 
-export function ChatMessage({ message, onAddToList }: Props) {
+export function ChatMessage({ message, onAddToList, onApproveAll, onApproveSelected, onReject }: Props) {
   const isUser = message.role === 'user';
 
   // Remove COLOR_PALETTE tags from displayed content
@@ -60,6 +64,18 @@ export function ChatMessage({ message, onAddToList }: Props) {
             {/* Product results */}
             {message.products && message.products.length > 0 && (
               <ProductGrid products={message.products} onAddToList={onAddToList} />
+            )}
+
+            {/* Approval card */}
+            {message.interrupt && (
+              <ApprovalCard
+                type={message.interrupt.type}
+                items={message.interrupt.items}
+                resolved={message.interruptResolved}
+                onApproveAll={() => onApproveAll?.(message.id)}
+                onApproveSelected={(ids) => onApproveSelected?.(message.id, ids)}
+                onReject={() => onReject?.(message.id)}
+              />
             )}
           </div>
         </div>

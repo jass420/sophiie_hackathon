@@ -22,6 +22,7 @@ PLAYWRIGHT_MCP_URL_B = "http://localhost:3002/sse"
 
 ALLOWED_TOOLS = {
     "browser_navigate",
+    "browser_navigate_back",
     "browser_snapshot",
     "browser_click",
     "browser_type",
@@ -29,16 +30,14 @@ ALLOWED_TOOLS = {
     "browser_fill_form",
     "browser_wait_for",
     "browser_take_screenshot",
-    "browser_tab_new",
-    "browser_tab_select",
-    "browser_tab_list",
-    "browser_tab_close",
-    "browser_scroll_down",
-    "browser_scroll_up",
+    "browser_tabs",
+    "browser_select_option",
+    "browser_hover",
 }
 
-# Keep a separate ref to the screenshot tool for the API endpoint
+# Keep separate refs to the screenshot tools for the API endpoints
 _screenshot_tool: BaseTool | None = None
+_screenshot_tool_b: BaseTool | None = None
 
 
 def _create_client(url: str) -> MultiServerMCPClient:
@@ -78,12 +77,19 @@ async def get_playwright_tools_a() -> list[BaseTool]:
 
 async def get_playwright_tools_b() -> list[BaseTool]:
     """Get browser tools from MCP server B (port 3002) — for Worker B."""
-    global _client_b, _tools_b
+    global _client_b, _tools_b, _screenshot_tool_b
 
     if _tools_b is not None:
         return _tools_b
 
     _client_b, _tools_b = await _get_tools_for(PLAYWRIGHT_MCP_URL_B)
+
+    # Use server B for Worker B screenshots
+    for t in _tools_b:
+        if t.name == "browser_take_screenshot":
+            _screenshot_tool_b = t
+            break
+
     return _tools_b
 
 
@@ -92,13 +98,12 @@ async def get_playwright_tools() -> list[BaseTool]:
     return await get_playwright_tools_a()
 
 
-async def take_screenshot() -> str | None:
-    """Take a screenshot via the MCP tool. Returns base64 image data or None."""
-    global _screenshot_tool
-    if _screenshot_tool is None:
+async def _take_screenshot_from(tool: BaseTool | None) -> str | None:
+    """Take a screenshot via an MCP tool. Returns base64 image data or None."""
+    if tool is None:
         return None
     try:
-        result = await _screenshot_tool.ainvoke({})
+        result = await tool.ainvoke({})
         if isinstance(result, list):
             for block in result:
                 if isinstance(block, dict) and block.get("type") == "image":
@@ -108,6 +113,16 @@ async def take_screenshot() -> str | None:
         return None
     except Exception:
         return None
+
+
+async def take_screenshot() -> str | None:
+    """Take a screenshot from Worker A's browser."""
+    return await _take_screenshot_from(_screenshot_tool)
+
+
+async def take_screenshot_b() -> str | None:
+    """Take a screenshot from Worker B's browser."""
+    return await _take_screenshot_from(_screenshot_tool_b)
 
 
 async def cleanup():

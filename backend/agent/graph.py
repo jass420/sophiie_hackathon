@@ -8,6 +8,7 @@ from pathlib import Path
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 from langgraph.types import interrupt
+from langgraph.checkpoint.memory import MemorySaver
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage
 from backend.agent.state import AgentState, WorkerResult, MessagingTask, MessagingResult
@@ -420,4 +421,5 @@ Workers will handle Facebook login if needed using these credentials.
     graph.add_edge("run_messaging_worker", "merge_messaging_results")
     graph.add_edge("merge_messaging_results", "orchestrator")
 
-    return graph.compile()
+    checkpointer = MemorySaver()
+    return graph.compile(checkpointer=checkpointer)
