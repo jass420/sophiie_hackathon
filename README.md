@@ -162,49 +162,125 @@ Sophiie senior engineers and CTO. Judging will take place over a 2-week period f
 
 | Field | Your Answer |
 |-------|-------------|
-| **Name** | |
-| **University / Employer** | |
+| **Name** | Jasnoor Singh |
+| **University / Employer** | Gradianza (self employed)|
 
 ### Project
 
 | Field | Your Answer |
 |-------|-------------|
-| **Project Name** | |
-| **One-Line Description** | |
+| **Project Name** | Roomie |
+| **One-Line Description** | An AI interior design assistant that analyzes your room, searches Facebook Marketplace for affordable furniture, and messages sellers for you — all through voice or text. |
 | **Demo Video Link** | |
-| **Tech Stack** | |
-| **AI Provider(s) Used** | |
+| **Tech Stack** | React + TypeScript (Vite), Python + FastAPI, LangGraph, Playwright MCP, Tailwind CSS |
+| **AI Provider(s) Used** | OpenAI GPT-5 (orchestrator + workers), OpenAI Whisper (speech-to-text), OpenAI TTS (text-to-speech) |
 
 ### About Your Project
 
 #### What does it do?
 
-<!-- 2-3 paragraphs explaining your agent, the problem it solves, and why the interaction matters -->
+Roomie is an AI interior design assistant that helps people furnish their homes beautifully and affordably using second-hand marketplaces. Upload a photo of your room, and Roomie analyzes the space — identifying the room type, dimensions, lighting, and current style — then suggests a color palette and furniture recommendations tailored to your taste and budget.
+
+Once you approve the direction, Roomie dispatches parallel browser-based worker agents that autonomously search Facebook Marketplace in real-time using Playwright. These workers navigate the actual website, scan listing cards for titles, prices, and locations, and return their top picks. Roomie then curates the results, explains why each piece works for your space, and drafts personalized messages to sellers.
+
+The entire flow — from room analysis to contacting sellers — happens through a single conversational interface with optional voice interaction. You can speak to Roomie and hear responses read aloud, making the experience feel like chatting with a knowledgeable interior designer friend.
 
 #### How does the interaction work?
 
-<!-- Describe the user experience — what does a user see, hear, or do when using your agent? -->
+The user opens the app and is greeted by Roomie in a clean, glassmorphic chat interface. They can type or use the microphone button to speak — speech is transcribed via OpenAI Whisper and fed into the conversation. They upload a photo of their room, and Roomie responds with a detailed analysis including a visual color palette with hex codes.
+
+Roomie asks about style preferences and budget (one question at a time to keep it conversational), then dispatches search tasks. Behind the scenes, two Playwright browser workers open separate Chromium windows and search Facebook Marketplace simultaneously. The user sees the agent working in real-time through a live browser preview panel.
+
+When results come back, Roomie presents curated picks with prices, conditions, and reasons why each item fits. An approval card appears where the user can approve all items, select specific ones, or reject them. Each item includes a pre-drafted message to the seller. On approval, messaging workers automatically navigate to the listings and send the messages — no manual copy-pasting needed.
 
 #### What makes it special?
 
-<!-- What are you most proud of? What would you want the judges to notice? -->
+**Real browser automation, not API scraping.** Roomie's workers actually open Chromium browsers and navigate Facebook Marketplace like a human would. This means it works with any marketplace without needing official APIs — and the user can watch it happen live through the browser preview panel.
+
+**Orchestrator + Worker architecture with true parallelism.** The LangGraph-based system uses a project manager (orchestrator) that delegates to specialized browser workers running in parallel, each with their own isolated browser instance. This mirrors how a real design team would work — one person coordinates while others search.
+
+**Full voice loop.** The app supports complete voice interaction — speak your request, hear the response. TTS is chunked by sentence for near-instant playback, so there's no awkward delay between the AI responding and speaking.
+
+**Human-in-the-loop approval flow.** Nothing gets sent to sellers without explicit user approval. The graph literally pauses (using LangGraph's `interrupt()`) and waits for the user to review and approve before any messages go out.
 
 #### How to run it
 
-<!-- Step-by-step instructions to set up and run your project locally -->
-
 ```bash
-# Example:
-# git clone <your-repo>
-# cd <your-project>
-# npm install
-# cp .env.example .env  # add your API keys
-# npm start
+# Clone the repo
+git clone https://github.com/jasnoorsingh/sophiie_hackathon.git
+cd sophiie_hackathon
+
+# Set up environment variables
+cp .env.example .env
+# Fill in: OPENAI_APIKEY, FB_EMAIL, FB_PASSWORD
+
+# Install backend dependencies
+pip install uv  # if not installed
+uv sync
+
+# Start Playwright MCP servers (two separate terminals or background)
+npx @playwright/mcp@latest --port 3001 --no-sandbox --shared-browser-context --viewport-size 1920x1080 --user-data-dir /tmp/pw-user-data-a &
+npx @playwright/mcp@latest --port 3002 --no-sandbox --shared-browser-context --viewport-size 1920x1080 --user-data-dir /tmp/pw-user-data-b &
+
+# Start the backend
+cd backend
+uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+
+# Start the frontend
+cd ../frontend
+npm install
+npm run dev
 ```
+
+The app will be available at `http://localhost:5173`. The frontend proxies API requests to the backend on port 8000.
 
 #### Architecture / Technical Notes
 
-<!-- Optional: describe your architecture, key technical decisions, or interesting implementation details -->
+```
+┌─────────────────────────────────────────────────────┐
+│                    Frontend (React)                  │
+│  Chat UI · Voice (STT/TTS) · Browser Preview · UX   │
+└──────────────────────┬──────────────────────────────┘
+                       │ SSE streaming
+┌──────────────────────▼──────────────────────────────┐
+│                 Backend (FastAPI)                     │
+│  /api/chat · /api/chat/resume · /api/voice/*         │
+└──────────────────────┬──────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────┐
+│              LangGraph State Machine                 │
+│                                                      │
+│  ┌─────────────┐    ┌──────────────┐                │
+│  │ Orchestrator │───▶│ Tool Router  │                │
+│  │   (GPT-5)   │◀───│              │                │
+│  └─────────────┘    └──────┬───────┘                │
+│                            │                         │
+│              ┌─────────────┼─────────────┐          │
+│              ▼             ▼             ▼          │
+│        ┌──────────┐ ┌──────────┐ ┌────────────┐    │
+│        │ Worker A  │ │ Worker B  │ │  Human     │    │
+│        │ (search)  │ │ (search)  │ │  Approval  │    │
+│        └─────┬─────┘ └─────┬─────┘ │ interrupt()│    │
+│              │             │        └────────────┘    │
+│              ▼             ▼                         │
+│        ┌──────────┐ ┌──────────┐                    │
+│        │Playwright│ │Playwright│                    │
+│        │ MCP :3001│ │ MCP :3002│                    │
+│        └──────────┘ └──────────┘                    │
+│              │             │                         │
+│              ▼             ▼                         │
+│        ┌──────────┐ ┌──────────┐                    │
+│        │Chromium A│ │Chromium B│                    │
+│        └──────────┘ └──────────┘                    │
+└─────────────────────────────────────────────────────┘
+```
+
+**Key decisions:**
+- **LangGraph over raw LangChain** — the state machine with `interrupt()` enables true human-in-the-loop approval without hacky polling or WebSocket state management
+- **Playwright MCP over Selenium/API scraping** — MCP provides a clean tool interface that LLMs can call directly, and Playwright handles modern JS-heavy sites like Facebook Marketplace
+- **Dual MCP servers** — each worker gets its own browser process and user data directory for true parallel browsing without session conflicts
+- **SSE streaming** — the backend streams partial responses to the frontend so the user sees the AI "typing" in real-time
+- **Sentence-chunked TTS** — instead of waiting for the full response to synthesize, audio is split into ~150-char sentence chunks and played sequentially for near-instant voice feedback
 
 ---
 
