@@ -39,7 +39,7 @@ function App() {
   return (
     <div ref={vantaRef} className="h-screen flex flex-col relative">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 px-6 py-3 flex items-center justify-between shrink-0 relative z-10">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,7 +55,7 @@ function App() {
 
         <button
           onClick={() => setShowSidebar(!showSidebar)}
-          className="relative px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          className="relative px-3 py-1.5 text-sm font-medium text-gray-700 bg-white/40 backdrop-blur-xl border border-white/30 rounded-lg hover:bg-white/60 transition-colors shadow-lg"
         >
           Shopping List
           {shoppingList.length > 0 && (
@@ -67,7 +67,7 @@ function App() {
       </header>
 
       {/* Main content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative z-10">
         {/* Chat */}
         <div className="flex-1">
           <ChatPanel
@@ -83,7 +83,7 @@ function App() {
 
         {/* Shopping list sidebar */}
         {showSidebar && (
-          <div className="w-80 border-l border-gray-200 bg-gray-50 shrink-0">
+          <div className="w-80 border-l border-gray-200/50 bg-white/30 backdrop-blur-sm shrink-0">
             <div className="p-4 border-b border-gray-200 bg-white">
               <h2 className="text-sm font-semibold text-gray-800">Shopping List</h2>
             </div>

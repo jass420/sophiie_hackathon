@@ -32,7 +32,7 @@ export function ChatMessage({ message, onAddToList, onApproveAll, onApproveSelec
         <div className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium shrink-0 ${
-              isUser ? 'bg-blue-600' : 'bg-violet-600'
+              isUser ? 'bg-gray-600' : 'bg-violet-600'
             }`}
           >
             {isUser ? 'U' : 'R'}
@@ -53,8 +53,8 @@ export function ChatMessage({ message, onAddToList, onApproveAll, onApproveSelec
               <div
                 className={`px-4 py-3 rounded-2xl whitespace-pre-wrap leading-relaxed ${
                   isUser
-                    ? 'bg-blue-600 text-white rounded-br-md'
-                    : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-md'
+                    ? 'bg-gray-500/30 backdrop-blur-xl text-gray-800 border border-gray-300/30 shadow-lg rounded-br-md'
+                    : 'bg-white/40 backdrop-blur-xl text-gray-800 shadow-lg border border-white/30 rounded-bl-md'
                 }`}
               >
                 {displayContent}

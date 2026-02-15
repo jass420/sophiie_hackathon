@@ -1,4 +1,4 @@
-import { useState, useRef, KeyboardEvent } from 'react';
+import { useState, useRef, type KeyboardEvent } from 'react';
 
 interface Props {
   onSend: (content: string, image?: string) => void;
@@ -52,7 +52,7 @@ export function ChatInput({ onSend, isLoading }: Props) {
   };
 
   return (
-    <div className="border-t border-gray-200 bg-white p-4">
+    <div className="border-t border-white/30 bg-white/20 backdrop-blur-xl p-4">
       {/* Image preview */}
       {imagePreview && (
         <div className="mb-3 relative inline-block">
@@ -74,7 +74,7 @@ export function ChatInput({ onSend, isLoading }: Props) {
         {/* Image upload button */}
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+          className="p-2.5 text-gray-500 hover:text-gray-700 hover:bg-white/40 rounded-xl transition-colors"
           title="Upload room photo"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -98,7 +98,7 @@ export function ChatInput({ onSend, isLoading }: Props) {
           onKeyDown={handleKeyDown}
           placeholder={imageBase64 ? "Add a message about your room..." : "Describe your space or upload a photo..."}
           rows={1}
-          className="flex-1 resize-none rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
+          className="flex-1 resize-none rounded-xl border border-white/30 bg-white/40 backdrop-blur-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent placeholder:text-gray-500 shadow-lg"
           style={{ minHeight: '44px', maxHeight: '120px' }}
         />
 
@@ -106,7 +106,7 @@ export function ChatInput({ onSend, isLoading }: Props) {
         <button
           onClick={handleSubmit}
           disabled={isLoading || (!input.trim() && !imageBase64)}
-          className="p-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="p-2.5 bg-white/40 backdrop-blur-xl text-gray-700 border border-white/30 rounded-xl hover:bg-white/60 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-lg"
         >
           {isLoading ? (
             <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
