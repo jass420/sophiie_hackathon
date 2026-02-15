@@ -17,9 +17,14 @@ venv/
 # node
 node_modules/
 
+# build artifacts
+dist/
+*.egg-info/
+
 # misc
 __pycache__/
 *.log
+*.pyc
 
 # playwright browser snapshot artifacts
 fb-*

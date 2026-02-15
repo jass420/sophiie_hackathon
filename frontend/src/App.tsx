@@ -1,14 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChatPanel } from './components/chat/ChatPanel';
 import { ShoppingList } from './components/products/ShoppingList';
 import { useChat } from './hooks/useChat';
+import * as THREE from 'three';
+import FOG from 'vanta/dist/vanta.fog.min';
 
 function App() {
   const { messages, isLoading, sendMessage, resumeWithApproval, shoppingList, addToShoppingList, removeFromShoppingList } = useChat();
   const [showSidebar, setShowSidebar] = useState(false);
+  const vantaRef = useRef<HTMLDivElement>(null);
+  const vantaEffect = useRef<ReturnType<typeof FOG> | null>(null);
+
+  useEffect(() => {
+    if (!vantaEffect.current && vantaRef.current) {
+      vantaEffect.current = FOG({
+        el: vantaRef.current,
+        THREE,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        highlightColor: 0x20abf7,
+        midtoneColor: 0xf2e00c,
+        blurFactor: 0.59,
+        speed: 0.40,
+        zoom: 1.30,
+      });
+    }
+    return () => {
+      if (vantaEffect.current) {
+        vantaEffect.current.destroy();
+        vantaEffect.current = null;
+      }
+    };
+  }, []);
 
   return (
-    <div className="h-screen flex flex-col">
+    <div ref={vantaRef} className="h-screen flex flex-col relative">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">

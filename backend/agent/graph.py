@@ -42,7 +42,8 @@ async def create_agent():
 
     worker_a_subgraph = build_worker_a(browser_tools_a, worker_model_a)
     worker_b_subgraph = build_worker_b(browser_tools_b, worker_model_b)
-    messaging_worker_subgraph = build_messaging_worker(browser_tools_a, worker_model_a)
+    messaging_worker_a = build_messaging_worker(browser_tools_a, worker_model_a)
+    messaging_worker_b = build_messaging_worker(browser_tools_b, worker_model_b)
     orchestrator_tool_node = ToolNode(ORCHESTRATOR_TOOLS, handle_tool_errors=True)
 
     # ---- System prompt with optional FB credentials ----
@@ -295,18 +296,8 @@ Workers will handle Facebook login if needed using these credentials.
 
     # ---- Messaging Nodes ----
 
-    async def run_messaging_worker(state: AgentState):
-        """Run the messaging worker to send a message via Playwright."""
-        tasks = state.get("_messaging_tasks", [])
-        if not tasks:
-            return {"_messaging_results": [MessagingResult(
-                product_url="", seller_name="", success=False,
-                reasoning="No messaging task found",
-            )]}
-
-        task = tasks[0]
-
-        # Include FB credentials if available
+    async def _send_single_message(subgraph, task, worker_name):
+        """Run one messaging worker subgraph for a single task."""
         creds_info = ""
         if fb_email and fb_password:
             creds_info = (
@@ -315,9 +306,10 @@ Workers will handle Facebook login if needed using these credentials.
                 f"- Password: {fb_password}\n"
             )
 
+        print(f"[{worker_name}] Sending message to {task['seller_name']} at {task['product_url'][:80]}")
         try:
             worker_state = await asyncio.wait_for(
-                messaging_worker_subgraph.ainvoke(
+                subgraph.ainvoke(
                     {
                         "messages": [HumanMessage(content=(
                             f"Send a message to the seller for this listing:\n"
@@ -331,23 +323,63 @@ Workers will handle Facebook login if needed using these credentials.
                     },
                     config={"recursion_limit": 50},
                 ),
-                timeout=120,  # 2 minute timeout for messaging
+                timeout=120,
+            )
+            result = parse_messaging_results(worker_state["messages"])
+            mr = MessagingResult(
+                product_url=task["product_url"],
+                seller_name=task["seller_name"],
+                success=result.get("success", False),
+                reasoning=result.get("reasoning", "Unknown"),
             )
         except asyncio.TimeoutError:
-            return {"_messaging_results": [MessagingResult(
+            mr = MessagingResult(
                 product_url=task["product_url"],
                 seller_name=task["seller_name"],
                 success=False,
                 reasoning="Messaging worker timed out",
+            )
+        print(f"[{worker_name}] Result for {task['seller_name']}: {'success' if mr['success'] else 'failed'}")
+        return mr
+
+    async def run_messaging_worker(state: AgentState):
+        """Run messaging workers A and B in parallel to send messages to approved sellers."""
+        tasks = state.get("_messaging_tasks", [])
+        if not tasks:
+            return {"_messaging_results": [MessagingResult(
+                product_url="", seller_name="", success=False,
+                reasoning="No messaging task found",
             )]}
 
-        result = parse_messaging_results(worker_state["messages"])
-        return {"_messaging_results": [MessagingResult(
-            product_url=task["product_url"],
-            seller_name=task["seller_name"],
-            success=result.get("success", False),
-            reasoning=result.get("reasoning", "Unknown"),
-        )]}
+        # Split tasks between Worker A and Worker B (alternating)
+        tasks_a = tasks[0::2]  # even indices
+        tasks_b = tasks[1::2]  # odd indices
+
+        # Build coroutines for each worker — each processes its tasks sequentially
+        async def run_batch(subgraph, batch, worker_name):
+            results = []
+            for task in batch:
+                r = await _send_single_message(subgraph, task, worker_name)
+                results.append(r)
+            return results
+
+        results_a, results_b = await asyncio.gather(
+            run_batch(messaging_worker_a, tasks_a, "MSG_WORKER_A"),
+            run_batch(messaging_worker_b, tasks_b, "MSG_WORKER_B"),
+        )
+
+        # Merge results back in original order
+        all_results = []
+        ia, ib = 0, 0
+        for i in range(len(tasks)):
+            if i % 2 == 0 and ia < len(results_a):
+                all_results.append(results_a[ia])
+                ia += 1
+            elif ib < len(results_b):
+                all_results.append(results_b[ib])
+                ib += 1
+
+        return {"_messaging_results": all_results}
 
     def merge_messaging_results(state: AgentState):
         """Format messaging results for the orchestrator."""
