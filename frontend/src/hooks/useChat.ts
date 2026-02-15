@@ -33,28 +33,51 @@ export function useChat() {
 
   const playTTS = useCallback(async (text: string) => {
     if (!text.trim()) return;
-    try {
-      const res = await fetch('/api/voice/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      });
-      if (!res.ok) return;
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      currentAudioRef.current = audio;
-      setIsSpeaking(true);
-      audio.onended = () => {
-        URL.revokeObjectURL(url);
-        currentAudioRef.current = null;
-        setIsSpeaking(false);
-      };
-      audio.play();
-    } catch (err) {
-      console.error('TTS playback failed:', err);
-      setIsSpeaking(false);
+
+    // Split into sentence chunks so the first chunk plays fast
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    const chunks: string[] = [];
+    let current = '';
+    for (const s of sentences) {
+      if ((current + s).length > 150 && current) {
+        chunks.push(current.trim());
+        current = s;
+      } else {
+        current += s;
+      }
     }
+    if (current.trim()) chunks.push(current.trim());
+
+    setIsSpeaking(true);
+
+    for (const chunk of chunks) {
+      try {
+        const res = await fetch('/api/voice/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: chunk }),
+        });
+        if (!res.ok) break;
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        currentAudioRef.current = audio;
+
+        const stopped = await new Promise<boolean>((resolve) => {
+          audio.onended = () => { URL.revokeObjectURL(url); resolve(false); };
+          audio.onpause = () => { URL.revokeObjectURL(url); resolve(true); };
+          audio.onerror = () => { URL.revokeObjectURL(url); resolve(true); };
+          audio.play().catch(() => { URL.revokeObjectURL(url); resolve(true); });
+        });
+
+        if (stopped || !currentAudioRef.current) break;
+      } catch {
+        break;
+      }
+    }
+
+    currentAudioRef.current = null;
+    setIsSpeaking(false);
   }, []);
 
   const _parseSSE = useCallback(async (

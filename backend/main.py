@@ -321,15 +321,20 @@ async def voice_transcribe(file: UploadFile = File(...)):
 
 @app.post("/api/voice/tts")
 async def voice_tts(req: TTSRequest):
-    """Convert text to speech using OpenAI TTS."""
+    """Convert text to speech using OpenAI TTS with streaming."""
     client = AsyncOpenAI(api_key=os.getenv("OPENAI_APIKEY"))
-    response = await client.audio.speech.create(
-        model="tts-1",
-        voice="nova",
-        input=req.text,
-    )
+
+    async def stream_audio():
+        async with client.audio.speech.with_streaming_response.create(
+            model="tts-1",
+            voice="nova",
+            input=req.text,
+        ) as response:
+            async for chunk in response.iter_bytes(1024):
+                yield chunk
+
     return StreamingResponse(
-        io.BytesIO(response.content),
+        stream_audio(),
         media_type="audio/mpeg",
         headers={"Content-Disposition": "inline; filename=speech.mp3"},
     )

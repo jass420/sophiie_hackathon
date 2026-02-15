@@ -1,0 +1,328 @@
+- generic [ref=e5]:
+  - banner:
+    - generic [ref=e6]:
+      - generic:
+        - button [disabled]
+      - link "Facebook" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img [ref=e8]
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic:
+          - generic:
+            - generic:
+              - button:
+                - img
+      - generic [ref=e19]:
+        - generic:
+          - img
+        - combobox "Search Facebook" [ref=e20] [cursor=pointer]
+    - navigation "Facebook" [ref=e24]:
+      - list [ref=e25]:
+        - listitem [ref=e26]:
+          - link "Home" [ref=e29] [cursor=pointer]:
+            - /url: /
+            - img [ref=e31]
+        - listitem [ref=e33]:
+          - link "Friends" [ref=e36] [cursor=pointer]:
+            - /url: /friends/
+            - img [ref=e38]
+        - listitem [ref=e40]:
+          - link "Reels" [ref=e43] [cursor=pointer]:
+            - /url: /reel/?s=tab
+            - img [ref=e45]
+        - listitem [ref=e48]:
+          - link "Marketplace" [ref=e52] [cursor=pointer]:
+            - /url: /marketplace/?ref=app_tab
+            - img [ref=e54]
+        - listitem [ref=e56]:
+          - link "Groups" [ref=e59] [cursor=pointer]:
+            - /url: /groups/
+            - img [ref=e61]
+    - navigation "Account Controls and Settings" [ref=e64]:
+      - button "Menu" [ref=e68] [cursor=pointer]:
+        - img [ref=e69]
+      - generic [ref=e74]:
+        - button "Messenger, 2 unread" [ref=e113] [cursor=pointer]:
+          - img [ref=e76]
+        - button [ref=e79] [cursor=pointer]:
+          - generic [ref=e82]:
+            - generic [ref=e83]: 2 Unread Chats
+            - generic [ref=e84]: "2"
+      - generic [ref=e88]:
+        - button "Notifications, 1 unread" [ref=e89] [cursor=pointer]:
+          - img [ref=e90]
+        - button [ref=e92] [cursor=pointer]:
+          - generic [ref=e93]:
+            - generic [ref=e94]: Number of unread notifications
+            - generic [ref=e95]: "1"
+      - button "Your profile" [ref=e98] [cursor=pointer]:
+        - generic [ref=e99]:
+          - img "Your profile" [ref=e100]
+          - img [ref=e107]
+  - generic [ref=e115]:
+    - navigation "Marketplace sidebar" [ref=e116]:
+      - generic [ref=e117]:
+        - generic [ref=e121]:
+          - navigation "Breadcrumb" [ref=e123]:
+            - link "Marketplace" [ref=e128] [cursor=pointer]:
+              - /url: /marketplace/
+          - heading "Search results" [level=1] [ref=e132]
+        - generic [ref=e141]:
+          - generic:
+            - img
+          - combobox "Search Marketplace" [ref=e142]: marble arc floor lamp
+        - generic [ref=e145]:
+          - button "Notify Me" [ref=e150] [cursor=pointer]:
+            - generic [ref=e154]: Notify Me
+          - link "Create new listing" [ref=e156] [cursor=pointer]:
+            - /url: /marketplace/create/
+            - generic [ref=e160]: Create new listing
+          - generic [ref=e161]:
+            - heading "Filters" [level=2] [ref=e174]:
+              - generic [ref=e176]: Filters
+            - generic [ref=e177]:
+              - button "Brisbane, Queensland, Australia Within 70 km" [ref=e178] [cursor=pointer]:
+                - generic [ref=e181]:
+                  - text: Brisbane, Queensland, Australia
+                  - generic [ref=e182]: ·
+                  - text: Within 70 km
+              - generic [ref=e184]:
+                - button "Sort by" [ref=e185] [cursor=pointer]:
+                  - generic [ref=e189]: Sort by
+                - generic [ref=e192]:
+                  - generic [ref=e194]: Price
+                  - generic [ref=e195]:
+                    - textbox "Minimum Range" [ref=e198]:
+                      - /placeholder: Min
+                    - generic [ref=e200]: to
+                    - textbox "Maximum Range" [ref=e203]:
+                      - /placeholder: Max
+                - button "Condition" [ref=e204] [cursor=pointer]:
+                  - generic [ref=e208]: Condition
+                - button "Date listed" [ref=e211] [cursor=pointer]:
+                  - generic [ref=e215]: Date listed
+                - button "Availability" [ref=e218] [cursor=pointer]:
+                  - generic [ref=e222]: Availability
+                - button "Color" [ref=e225] [cursor=pointer]:
+                  - generic [ref=e229]: Color
+          - generic [ref=e245]: Categories
+          - link "Vehicles" [ref=e248] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=546583916084032&query=Vehicles&referral_ui_component=category_menu_item
+            - generic [ref=e258]: Vehicles
+          - link "Property Rentals" [ref=e261] [cursor=pointer]:
+            - /url: /marketplace/brisbane/propertyrentals/
+            - generic [ref=e271]: Property Rentals
+          - link "Apparel" [ref=e274] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=677457442746983&query=Apparel&referral_ui_component=category_menu_item
+            - generic [ref=e284]: Apparel
+          - link "Classifieds" [ref=e287] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=759201041254543&query=Classifieds&referral_ui_component=category_menu_item
+            - generic [ref=e297]: Classifieds
+          - link "Electronics" [ref=e300] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=479353692612078&query=Electronics&referral_ui_component=category_menu_item
+            - generic [ref=e310]: Electronics
+          - link "Entertainment" [ref=e313] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=529595287638583&query=Entertainment&referral_ui_component=category_menu_item
+            - generic [ref=e323]: Entertainment
+          - link "Family" [ref=e326] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=891748581240437&query=Family&referral_ui_component=category_menu_item
+            - generic [ref=e336]: Family
+          - link "Free Stuff" [ref=e339] [cursor=pointer]:
+            - /url: /marketplace/brisbane/free/
+            - generic [ref=e349]: Free Stuff
+          - link "Garden & Outdoor" [ref=e352] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=1109541402725436&query=Garden%20%26%20Outdoor&referral_ui_component=category_menu_item
+            - generic [ref=e362]: Garden & Outdoor
+          - link "Hobbies" [ref=e365] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=459026188375950&query=Hobbies&referral_ui_component=category_menu_item
+            - generic [ref=e375]: Hobbies
+          - link "Home Goods" [ref=e378] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=753380185098614&query=Home%20Goods&referral_ui_component=category_menu_item
+            - generic [ref=e388]: Home Goods
+          - link "Home Improvement Supplies" [ref=e391] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=476291743038859&query=Home%20Improvement%20Supplies&referral_ui_component=category_menu_item
+            - generic [ref=e401]: Home Improvement Supplies
+          - link "Home Sales" [ref=e404] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=1270772586445798&query=Home%20Sales&referral_ui_component=category_menu_item
+            - generic [ref=e414]: Home Sales
+          - link "Musical Instruments" [ref=e417] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=1078592699170502&query=Musical%20Instruments&referral_ui_component=category_menu_item
+            - generic [ref=e427]: Musical Instruments
+          - link "Office Supplies" [ref=e430] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=586894672179024&query=Office%20Supplies&referral_ui_component=category_menu_item
+            - generic [ref=e440]: Office Supplies
+          - link "Pet Supplies" [ref=e443] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=197143151659643&query=Pet%20Supplies&referral_ui_component=category_menu_item
+            - generic [ref=e453]: Pet Supplies
+          - link "Sporting Goods" [ref=e456] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=391335928190702&query=Sporting%20Goods&referral_ui_component=category_menu_item
+            - generic [ref=e466]: Sporting Goods
+          - link "Toys & Games" [ref=e469] [cursor=pointer]:
+            - /url: /marketplace/brisbane/search/?category_id=199404184572737&query=Toys%20%26%20Games&referral_ui_component=category_menu_item
+            - generic [ref=e479]: Toys & Games
+          - link "Buy and sell groups" [ref=e481] [cursor=pointer]:
+            - /url: /marketplace/groups/
+            - generic [ref=e491]: Buy and sell groups
+    - main "Collection of Marketplace items" [ref=e493]:
+      - generic [ref=e498]:
+        - link "Freedom Marble Base Arc Floor Lamp in Brisbane, QLD A$150" [ref=e507] [cursor=pointer]:
+          - /url: /marketplace/item/1261350845897074/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3A7865cd55-d6eb-4d31-986d-3b8839973483&__tn__=!%3AD
+          - generic [ref=e508]:
+            - img "Freedom Marble Base Arc Floor Lamp in Brisbane, QLD" [ref=e515]
+            - generic [ref=e516]:
+              - generic [ref=e520]: A$150
+              - generic [ref=e525]: Freedom Marble Base Arc Floor Lamp
+              - generic [ref=e530]: Brisbane, QLD
+        - link "Floor lamp in Brisbane, QLD A$30" [ref=e539] [cursor=pointer]:
+          - /url: /marketplace/item/864839932657452/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3A7865cd55-d6eb-4d31-986d-3b8839973483&__tn__=!%3AD
+          - generic [ref=e540]:
+            - img "Floor lamp in Brisbane, QLD" [ref=e547]
+            - generic [ref=e548]:
+              - generic [ref=e552]: A$30
+              - generic [ref=e557]: Floor lamp
+              - generic [ref=e562]: Brisbane, QLD
+        - link "Marble base lamp in Brisbane, QLD A$350 A$500" [ref=e571] [cursor=pointer]:
+          - /url: /marketplace/item/2806159542911652/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3A7865cd55-d6eb-4d31-986d-3b8839973483&__tn__=!%3AD
+          - generic [ref=e572]:
+            - img "Marble base lamp in Brisbane, QLD" [ref=e579]
+            - generic [ref=e580]:
+              - generic [ref=e583]:
+                - generic [ref=e584]: A$350
+                - generic [ref=e586]: A$500
+              - generic [ref=e591]: Marble base lamp
+              - generic [ref=e596]: Brisbane, QLD
+        - link "Brand new ARC Lamp in Brisbane, QLD A$225" [ref=e605] [cursor=pointer]:
+          - /url: /marketplace/item/2420748368356634/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3A7865cd55-d6eb-4d31-986d-3b8839973483&__tn__=!%3AD
+          - generic [ref=e606]:
+            - img "Brand new ARC Lamp in Brisbane, QLD" [ref=e613]
+            - generic [ref=e614]:
+              - generic [ref=e618]: A$225
+              - generic [ref=e623]: Brand new ARC Lamp
+              - generic [ref=e628]: Brisbane, QLD
+        - link "Floor lamp (white) in Brisbane, QLD A$65" [ref=e637] [cursor=pointer]:
+          - /url: /marketplace/item/2125318998228999/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3A7865cd55-d6eb-4d31-986d-3b8839973483&__tn__=!%3AD
+          - generic [ref=e638]:
+            - img "Floor lamp (white) in Brisbane, QLD" [ref=e645]
+            - generic [ref=e646]:
+              - generic [ref=e650]: A$65
+              - generic [ref=e655]: Floor lamp (white)
+              - generic [ref=e660]: Brisbane, QLD
+        - link "Floor lamp $80 in Brisbane, QLD A$50 A$100" [ref=e669] [cursor=pointer]:
+          - /url: /marketplace/item/875124942144996/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3A7865cd55-d6eb-4d31-986d-3b8839973483&__tn__=!%3AD
+          - generic [ref=e670]:
+            - img "Floor lamp $80 in Brisbane, QLD" [ref=e677]
+            - generic [ref=e678]:
+              - generic [ref=e681]:
+                - generic [ref=e682]: A$50
+                - generic [ref=e684]: A$100
+              - generic [ref=e689]: Floor lamp $80
+              - generic [ref=e694]: Brisbane, QLD
+        - link "Floor lamp with stone base in Brisbane, QLD A$100" [ref=e703] [cursor=pointer]:
+          - /url: /marketplace/item/2958451621020335/?ref=search&referral_code=null&referral_story_type=post&tracking=browse_serp%3A7865cd55-d6eb-4d31-986d-3b8839973483&__tn__=!%3AD
+          - generic [ref=e704]:
+            - img "Floor lamp with stone base in Brisbane, QLD" [ref=e711]
+            - generic [ref=e712]:
+              - generic [ref=e716]: A$100
+              - generic [ref=e721]: Floor lamp with stone base
+              - generic [ref=e726]: Brisbane, QLD
+        - generic [ref=e728]:
+          - generic [ref=e729]:
+            - img "Loading more items" [ref=e730]
+            - status "Loading..." [ref=e731]
+          - generic [ref=e732]:
+            - status "Loading..." [ref=e733]
+            - status "Loading..." [ref=e734]
+            - status "Loading..." [ref=e735]
+            - status "Loading..." [ref=e736]
+  - generic:
+    - generic:
+      - generic:
+        - generic [ref=e748]:
+          - generic [ref=e750]:
+            - generic [ref=e754]:
+              - button "Conversation titled Jas · Used Couch with Chaise. Seats 3-4" [ref=e756] [cursor=pointer]
+              - button "Chat settings" [ref=e767] [cursor=pointer]:
+                - generic [ref=e769]:
+                  - heading "Jas · Used Couch with Chaise. Seats 3-4" [level=2] [ref=e774]:
+                    - generic [ref=e776]: Jas · Used Couch with Chaise. Seats 3-4
+                  - img [ref=e777]
+            - generic [ref=e779]:
+              - button "Minimize chat" [ref=e782] [cursor=pointer]:
+                - img [ref=e783]
+              - button "Close chat" [ref=e788] [cursor=pointer]:
+                - img [ref=e789]
+          - generic [ref=e794]:
+            - grid "Messages in conversation titled Jas · Used Couch with Chaise. Seats 3-4" [ref=e799]:
+              - generic [ref=e801]:
+                - row "Phillip Grouls Jas · Used Couch with Chaise. Seats 3-4 Enter" [ref=e802]:
+                  - gridcell "Phillip Grouls Jas · Used Couch with Chaise. Seats 3-4" [ref=e804]:
+                    - generic [ref=e805]:
+                      - img "Phillip Grouls" [ref=e808]:
+                        - img "Phillip Grouls" [ref=e814]
+                      - heading "Jas · Used Couch with Chaise. Seats 3-4" [level=4] [ref=e817]:
+                        - generic [ref=e819]: Jas · Used Couch with Chaise. Seats 3-4
+                      - list [ref=e820]
+                  - gridcell "Enter":
+                    - button "Enter" [ref=e821] [cursor=pointer]:
+                      - generic:
+                        - generic:
+                          - generic: Enter
+                - row "You started this chat. View seller profile Enter" [ref=e827]:
+                  - gridcell "You started this chat. View seller profile" [ref=e829]:
+                    - generic [ref=e834]:
+                      - text: You started this chat.
+                      - link "View seller profile" [ref=e835] [cursor=pointer]:
+                        - /url: https://www.facebook.com/marketplace/profile/100003108625993/
+                  - gridcell "Enter":
+                    - button "Enter" [ref=e836] [cursor=pointer]:
+                      - generic:
+                        - generic:
+                          - generic: Enter
+                - row "You sent Hello! I'm keen on your couch with chaise listed for $640. Is it still available? What are the full dimensions (length and chaise depth) and which side is the chaise on? Any stains/tears or sagging cushions? From a smoke/pet-free home? I can pick up in Brisbane this week and could do $600 cash if that helps. Thanks! React Reply More Sent 4m ago Enter" [ref=e842]:
+                  - gridcell "You sent Hello! I'm keen on your couch with chaise listed for $640. Is it still available? What are the full dimensions (length and chaise depth) and which side is the chaise on? Any stains/tears or sagging cushions? From a smoke/pet-free home? I can pick up in Brisbane this week and could do $600 cash if that helps. Thanks! React Reply More Sent 4m ago" [ref=e844]:
+                    - generic:
+                      - generic:
+                        - heading "You sent" [level=5]:
+                          - generic [ref=e845]: You sent
+                    - generic [ref=e846]:
+                      - generic [ref=e854]: Hello! I'm keen on your couch with chaise listed for $640. Is it still available? What are the full dimensions (length and chaise depth) and which side is the chaise on? Any stains/tears or sagging cushions? From a smoke/pet-free home? I can pick up in Brisbane this week and could do $600 cash if that helps. Thanks!
+                      - generic [ref=e857]:
+                        - button "React" [ref=e861] [cursor=pointer]:
+                          - img [ref=e862]
+                        - button "Reply" [ref=e871] [cursor=pointer]:
+                          - img [ref=e872]
+                        - button "More" [ref=e880] [cursor=pointer]:
+                          - img [ref=e881]
+                    - generic [ref=e885]: Sent 4m ago
+                  - gridcell "Enter":
+                    - button "Enter" [ref=e886] [cursor=pointer]:
+                      - generic:
+                        - generic:
+                          - generic: Enter
+            - group "Thread composer" [ref=e889]:
+              - generic [ref=e890]:
+                - button "Send a voice clip" [ref=e894] [cursor=pointer]:
+                  - img [ref=e895]
+                - button "Attach a file up to 25 MB" [ref=e906] [cursor=pointer]:
+                  - img [ref=e907]
+                - button "Choose a sticker" [ref=e915] [cursor=pointer]:
+                  - img [ref=e916]
+                - button "Choose a GIF" [disabled] [ref=e924]:
+                  - img [ref=e925]
+              - generic [ref=e929]:
+                - generic [ref=e930]: Write to Jas · Used Couch with Chaise. Seats 3-4
+                - generic [ref=e932]:
+                  - generic [ref=e933]:
+                    - textbox "Message" [ref=e934]:
+                      - paragraph [ref=e935]
+                    - generic: Aa
+                  - button "Choose an emoji" [ref=e938] [cursor=pointer]:
+                    - img [ref=e939]
+              - button "Send a like" [ref=e946] [cursor=pointer]:
+                - generic [ref=e948]:
+                  - generic:
+                    - img
+        - button "New message" [ref=e951] [cursor=pointer]
+      - tooltip "4:47 PM" [ref=e956]:
+        - generic [ref=e961]: 4:47 PM
