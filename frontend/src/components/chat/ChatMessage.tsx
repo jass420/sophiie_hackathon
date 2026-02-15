@@ -15,10 +15,15 @@ export function ChatMessage({ message, onAddToList, onApproveAll, onApproveSelec
   const isUser = message.role === 'user';
 
   // Remove COLOR_PALETTE tags from displayed content
-  const displayContent = message.content.replace(
+  let displayContent = message.content.replace(
     /\[COLOR_PALETTE:\s*#[0-9a-fA-F]{6}(?:\s*,\s*#[0-9a-fA-F]{6})*\]/g,
     ''
   ).trim();
+
+  // Hide raw JSON content when an approval card is showing
+  if (message.interrupt && displayContent.startsWith('{')) {
+    displayContent = '';
+  }
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>

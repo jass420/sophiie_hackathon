@@ -5,19 +5,18 @@ from langchain_core.tools import tool
 @tool
 def propose_shortlist(items_json: str) -> str:
     """Propose a shortlist of items for the user to approve or reject.
-    Call this BEFORE adding items to the shopping list or contacting sellers.
-    The user will see the proposal and can approve, reject, or select specific items.
+    The user will see each item with its draft message. Approved items get their messages sent to sellers automatically.
 
     Args:
-        items_json: JSON string of an array of items. Each item must have:
+        items_json: JSON string of an array of items. Each item MUST have:
             - id: unique identifier
             - title: item name
             - price: item price (number)
             - source: marketplace name
             - url: link to listing
+            - draft_message: message to send to the seller (REQUIRED)
             - image_url: product image URL (optional)
             - seller: seller name (optional)
-            - draft_message: draft message to seller (optional, include if proposing to contact)
 
     Returns:
         Confirmation that the proposal was submitted for user review
@@ -132,7 +131,8 @@ def dispatch_searches(tasks_json: str) -> str:
 
 
 # Tools for the orchestrator (no browser tools)
-ORCHESTRATOR_TOOLS = [propose_shortlist, add_to_shopping_list, contact_seller, dispatch_searches]
+# Only propose_shortlist and dispatch_searches — approval triggers messaging automatically
+ORCHESTRATOR_TOOLS = [propose_shortlist, dispatch_searches]
 
 # Legacy alias
 ALL_TOOLS = ORCHESTRATOR_TOOLS

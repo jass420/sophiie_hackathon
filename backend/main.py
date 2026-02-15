@@ -1,3 +1,4 @@
+import asyncio
 import json
 import uuid
 import base64
@@ -25,13 +26,18 @@ app.add_middleware(
 
 # Lazy load agent to avoid import issues at startup
 _agent = None
+_agent_lock = asyncio.Lock()
 
 
 async def get_agent():
     global _agent
-    if _agent is None:
-        from backend.agent.graph import create_agent
-        _agent = await create_agent()
+    if _agent is not None:
+        return _agent
+    async with _agent_lock:
+        if _agent is None:  # double-check after acquiring lock
+            from backend.agent.graph import create_agent
+            _agent = await create_agent()
+            print(f"[GET_AGENT] Created agent id={id(_agent)}")
     return _agent
 
 
@@ -59,8 +65,19 @@ async def health():
 
 def _extract_response(result):
     """Extract content, tool_calls, and products from an agent result."""
-    last_message = result["messages"][-1]
-    content = last_message.content
+    # Walk backwards to find the last AIMessage with real content
+    # (skip ToolMessages which contain raw JSON that shouldn't be displayed)
+    content = ""
+    for msg in reversed(result["messages"]):
+        if isinstance(msg, AIMessage) and msg.content:
+            text = msg.content if isinstance(msg.content, str) else str(msg.content)
+            # Skip AI messages that are just tool call placeholders (empty or whitespace)
+            if text.strip():
+                content = text
+                break
+    # Fallback to last message if no AI content found
+    if not content:
+        content = result["messages"][-1].content
 
     tool_results = []
     products = []
@@ -87,6 +104,7 @@ async def chat(request: ChatRequest):
     agent = await get_agent()
 
     thread_id = request.thread_id or str(uuid.uuid4())
+    print(f"[CHAT] thread_id={thread_id}, incoming_thread_id={request.thread_id}, message_count={len(request.messages)}")
 
     # Convert messages to LangChain format
     lc_messages = []
@@ -135,9 +153,14 @@ async def chat(request: ChatRequest):
             )
 
             content, tool_results, products = _extract_response(result)
+            print(f"[CHAT] ainvoke returned. Message count in result: {len(result.get('messages', []))}")
+            print(f"[CHAT] agent id={id(agent)}, checkpointer id={id(agent.checkpointer) if hasattr(agent, 'checkpointer') else 'N/A'}")
 
             # Check if the graph hit an interrupt
             state = await agent.aget_state(config)
+            print(f"[CHAT] Post-ainvoke state.next={state.next}, tasks={[t.name if hasattr(t, 'name') else str(t) for t in (state.tasks or [])]}")
+            if hasattr(agent, 'checkpointer') and hasattr(agent.checkpointer, 'storage'):
+                print(f"[CHAT] Checkpointer storage keys: {list(agent.checkpointer.storage.keys())[:5]}")
             if state.next:  # graph is paused at a node
                 # Find the interrupt data from the state's tasks
                 interrupt_data = None
@@ -200,6 +223,19 @@ async def chat_resume(request: ResumeRequest):
 
     async def event_stream():
         try:
+            # Debug: check state before resume
+            print(f"[RESUME] agent id={id(agent)}, checkpointer id={id(agent.checkpointer) if hasattr(agent, 'checkpointer') else 'N/A'}")
+            if hasattr(agent, 'checkpointer') and hasattr(agent.checkpointer, 'storage'):
+                print(f"[RESUME] Checkpointer storage keys: {list(agent.checkpointer.storage.keys())[:5]}")
+            pre_state = await agent.aget_state(config)
+            print(f"[RESUME] thread_id={request.thread_id}, action={request.action}")
+            print(f"[RESUME] Pre-resume state.next={pre_state.next}")
+            print(f"[RESUME] Pre-resume tasks={[t.name if hasattr(t, 'name') else str(t) for t in (pre_state.tasks or [])]}")
+            if pre_state.values.get("messages"):
+                print(f"[RESUME] Pre-resume message count={len(pre_state.values['messages'])}")
+            else:
+                print(f"[RESUME] Pre-resume messages=EMPTY")
+
             result = await agent.ainvoke(
                 Command(resume=resume_value),
                 config=config,

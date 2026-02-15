@@ -66,7 +66,13 @@ Workers will handle Facebook login if needed using these credentials.
         messages = state["messages"]
         if not messages or not isinstance(messages[0], SystemMessage):
             messages = [SystemMessage(content=full_prompt)] + messages
+        # Debug: log what messages the orchestrator sees
+        print(f"[ORCHESTRATOR] Invoking with {len(messages)} messages. Last 3 types: {[type(m).__name__ for m in messages[-3:]]}")
+        for m in messages[-3:]:
+            content_preview = str(m.content)[:200] if m.content else "(empty)"
+            print(f"  [{type(m).__name__}] {content_preview}")
         response = orchestrator_model.invoke(messages)
+        print(f"[ORCHESTRATOR] Response: {str(response.content)[:200]}")
         return {"messages": [response]}
 
     def process_dispatch(state: AgentState):
@@ -205,7 +211,7 @@ Workers will handle Facebook login if needed using these credentials.
                     )
                 lines.append("")
             summary = "\n".join(lines)
-            summary += "\nReview these results and present your curated picks to the user. Then call `propose_shortlist` with your top recommendations."
+            summary += "\nReview these results and present your curated picks to the user. Then call `propose_shortlist` with your top recommendations. REMEMBER: every item MUST include a `draft_message` with a friendly message to the seller."
 
         return {
             "messages": [HumanMessage(content=summary)],
@@ -215,20 +221,27 @@ Workers will handle Facebook login if needed using these credentials.
 
     def human_approval(state: AgentState):
         """Interrupt the graph and wait for user approval."""
+        print(f"[HUMAN_APPROVAL] Entered human_approval node")
         proposal_data = None
         for msg in reversed(state["messages"]):
             if isinstance(msg, ToolMessage):
+                content_preview = str(msg.content)[:200]
+                print(f"[HUMAN_APPROVAL] Found ToolMessage: {content_preview}")
                 try:
                     result = json.loads(msg.content)
+                    print(f"[HUMAN_APPROVAL] Parsed status={result.get('status')}")
                     if result.get("status") == "pending_approval":
                         proposal_data = result
-                except (json.JSONDecodeError, TypeError):
+                except (json.JSONDecodeError, TypeError) as e:
+                    print(f"[HUMAN_APPROVAL] JSON parse error: {e}")
                     pass
                 break
 
         if not proposal_data:
+            print(f"[HUMAN_APPROVAL] No proposal_data found — returning early WITHOUT interrupt")
             return {"pending_proposal": None, "approved_items": []}
 
+        print(f"[HUMAN_APPROVAL] Calling interrupt() with {len(proposal_data.get('items', []))} items")
         user_decision = interrupt({
             "type": proposal_data.get("type", "shortlist"),
             "items": proposal_data.get("items", []),
@@ -238,46 +251,49 @@ Workers will handle Facebook login if needed using these credentials.
 
         action = user_decision.get("action", "reject") if isinstance(user_decision, dict) else str(user_decision)
 
+        all_items = proposal_data.get("items", [])
+
         if action == "approve_all":
-            approved_ids = [item["id"] for item in proposal_data.get("items", [])]
+            approved_ids = [item["id"] for item in all_items]
+            approved_items = all_items
             approval_msg = "User approved all proposed items."
         elif action == "approve_selected":
             approved_ids = user_decision.get("selected_ids", [])
-            selected_titles = [
-                item["title"]
-                for item in proposal_data.get("items", [])
-                if item["id"] in approved_ids
-            ]
+            approved_items = [item for item in all_items if item["id"] in approved_ids]
+            selected_titles = [item["title"] for item in approved_items]
             approval_msg = f"User approved these items: {', '.join(selected_titles)}"
         else:
             approved_ids = []
+            approved_items = []
             approval_msg = "User rejected the proposal."
 
-        return {
+        # If approved items have draft_message fields, build messaging tasks directly
+        # so we can route straight to the messaging worker without another orchestrator round-trip
+        messaging_tasks = []
+        for item in approved_items:
+            if item.get("draft_message") and item.get("url"):
+                messaging_tasks.append(MessagingTask(
+                    product_url=item["url"],
+                    message=item["draft_message"],
+                    seller_name=item.get("seller", "Seller"),
+                ))
+
+        result = {
             "messages": [HumanMessage(content=approval_msg)],
             "pending_proposal": None,
             "approved_items": approved_ids,
         }
 
-    # ---- Messaging Nodes ----
+        if messaging_tasks:
+            result["_messaging_tasks"] = messaging_tasks
+            result["_messaging_results"] = []
+            print(f"[HUMAN_APPROVAL] Built {len(messaging_tasks)} messaging tasks → routing to messaging worker")
+        else:
+            print(f"[HUMAN_APPROVAL] No messaging tasks (action={action}, {len(approved_items)} approved items) → routing to orchestrator")
 
-    def process_messaging(state: AgentState):
-        """Extract messaging task from the contact_seller tool result."""
-        for msg in reversed(state["messages"]):
-            if isinstance(msg, ToolMessage):
-                try:
-                    result = json.loads(msg.content)
-                    if result.get("status") == "dispatch_messaging":
-                        task = MessagingTask(
-                            product_url=result["product_url"],
-                            message=result["message"],
-                            seller_name=result.get("seller_name", "Seller"),
-                        )
-                        return {"_messaging_tasks": [task], "_messaging_results": []}
-                except (json.JSONDecodeError, TypeError):
-                    pass
-                break
-        return {"_messaging_tasks": [], "_messaging_results": []}
+        return result
+
+    # ---- Messaging Nodes ----
 
     async def run_messaging_worker(state: AgentState):
         """Run the messaging worker to send a message via Playwright."""
@@ -352,6 +368,15 @@ Workers will handle Facebook login if needed using these credentials.
 
     # ---- Routing ----
 
+    def route_after_approval(state: AgentState):
+        """Route after human approval — go to messaging worker if tasks exist, otherwise orchestrator."""
+        tasks = state.get("_messaging_tasks", [])
+        if tasks:
+            print(f"[ROUTE_AFTER_APPROVAL] Found {len(tasks)} messaging tasks → run_messaging_worker")
+            return "run_messaging_worker"
+        print(f"[ROUTE_AFTER_APPROVAL] No messaging tasks → orchestrator")
+        return "orchestrator"
+
     def route_orchestrator(state: AgentState):
         last = state["messages"][-1]
         if hasattr(last, "tool_calls") and last.tool_calls:
@@ -361,17 +386,23 @@ Workers will handle Facebook login if needed using these credentials.
     def route_after_orchestrator_tools(state: AgentState) -> str:
         for msg in reversed(state["messages"]):
             if isinstance(msg, ToolMessage):
+                content_preview = str(msg.content)[:200]
+                print(f"[ROUTE_AFTER_TOOLS] Found ToolMessage: {content_preview}")
                 try:
                     result = json.loads(msg.content)
-                    if result.get("status") == "pending_approval":
+                    status = result.get("status")
+                    print(f"[ROUTE_AFTER_TOOLS] Parsed status={status}")
+                    if status == "pending_approval":
+                        print(f"[ROUTE_AFTER_TOOLS] → human_approval")
                         return "human_approval"
-                    if result.get("status") == "dispatched":
+                    if status == "dispatched":
+                        print(f"[ROUTE_AFTER_TOOLS] → process_dispatch")
                         return "process_dispatch"
-                    if result.get("status") == "dispatch_messaging":
-                        return "process_messaging"
-                except (json.JSONDecodeError, TypeError):
+                except (json.JSONDecodeError, TypeError) as e:
+                    print(f"[ROUTE_AFTER_TOOLS] JSON parse error: {e}")
                     pass
                 break
+        print(f"[ROUTE_AFTER_TOOLS] → orchestrator (fallback)")
         return "orchestrator"
 
     # ---- Build graph ----
@@ -380,9 +411,8 @@ Workers will handle Facebook login if needed using these credentials.
     #   START → orchestrator → route
     #     ├→ END
     #     └→ orchestrator_tools → route_after_tools
-    #          ├→ human_approval → orchestrator
+    #          ├→ human_approval → run_messaging_worker (sends messages) OR orchestrator (rejected)
     #          ├→ process_dispatch → run_workers (A+B parallel) → merge_results → orchestrator
-    #          ├→ process_messaging → run_messaging_worker → merge_messaging_results → orchestrator
     #          └→ orchestrator (loop)
 
     graph = StateGraph(AgentState)
@@ -393,7 +423,6 @@ Workers will handle Facebook login if needed using these credentials.
     graph.add_node("run_workers", run_workers)
     graph.add_node("merge_results", merge_results)
     graph.add_node("human_approval", human_approval)
-    graph.add_node("process_messaging", process_messaging)
     graph.add_node("run_messaging_worker", run_messaging_worker)
     graph.add_node("merge_messaging_results", merge_messaging_results)
 
@@ -409,15 +438,17 @@ Workers will handle Facebook login if needed using these credentials.
         {
             "human_approval": "human_approval",
             "process_dispatch": "process_dispatch",
-            "process_messaging": "process_messaging",
             "orchestrator": "orchestrator",
         },
     )
     graph.add_edge("process_dispatch", "run_workers")
     graph.add_edge("run_workers", "merge_results")
     graph.add_edge("merge_results", "orchestrator")
-    graph.add_edge("human_approval", "orchestrator")
-    graph.add_edge("process_messaging", "run_messaging_worker")
+    graph.add_conditional_edges(
+        "human_approval",
+        route_after_approval,
+        {"run_messaging_worker": "run_messaging_worker", "orchestrator": "orchestrator"},
+    )
     graph.add_edge("run_messaging_worker", "merge_messaging_results")
     graph.add_edge("merge_messaging_results", "orchestrator")
 
