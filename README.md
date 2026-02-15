@@ -171,7 +171,7 @@ Sophiie senior engineers and CTO. Judging will take place over a 2-week period f
 |-------|-------------|
 | **Project Name** | Roomie |
 | **One-Line Description** | An AI interior design assistant that analyzes your room, searches Facebook Marketplace for affordable furniture, and messages sellers for you — all through voice or text. |
-| **Demo Video Link** | |
+| **Demo Video Link** | https://youtu.be/AH2gWuR1Iyk |
 | **Tech Stack** | React + TypeScript (Vite), Python + FastAPI, LangGraph, Playwright MCP, Tailwind CSS |
 | **AI Provider(s) Used** | OpenAI GPT-5 (orchestrator + workers), OpenAI Whisper (speech-to-text), OpenAI TTS (text-to-speech) |
 
